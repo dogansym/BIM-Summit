@@ -3,116 +3,194 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AECO AI Workshop</title>
+  <title>Symetri BIM Summit - AI Workshop 2026</title>
   <meta name="description" content="Interactive AECO AI workshop challenges" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="layout">
-    <aside class="sidebar">
-      <div class="brand">AECO AI Workshop</div>
-      <p class="subtitle">BIM Summit Interactive Session</p>
-      <nav class="nav">
-        <button class="nav-link active" data-target="start">Start</button>
-        <button class="nav-link" data-target="level-1">Level 1</button>
-        <button class="nav-link" data-target="level-2">Level 2</button>
-      </nav>
-      <div class="sidebar-footer">
-        <p id="progressText">Progress: 0 / 2 solved</p>
-        <button id="resetProgressBtn" class="ghost">Reset progress</button>
+  <div class="app">
+    <header class="site-header">
+      <div>
+        <p class="eyebrow">Symetri BIM Summit</p>
+        <h1>AI Workshop 2026</h1>
       </div>
-    </aside>
+      <div class="stats">
+        <div class="stat"><span>Progress</span><strong id="progressText">0 / 2</strong></div>
+        <div class="stat"><span>Score</span><strong id="scoreText">0</strong></div>
+      </div>
+    </header>
 
-    <main class="content">
-      <header class="topbar">
-        <h1>AI for Real-World AECO Decisions</h1>
-      </header>
+    <nav class="tabs">
+      <button class="tab active" data-target="start">Start</button>
+      <button class="tab" data-target="level-1">Task 1</button>
+      <button class="tab" data-target="level-2">Task 2</button>
+    </nav>
 
-      <section id="start" class="panel">
-        <h2>Welcome</h2>
+    <main class="main">
+      <section id="start" class="card">
+        <h2>Welcome to the challenge</h2>
         <p>
-          This mobile-first workshop simulates real AECO complexity: messy notes, mixed data,
-          and time pressure. Use your own reasoning first. AI can help you think faster,
-          structure information, and verify assumptions.
+          Solve tasks in sequence to unlock the next one. Use AI as a thinking assistant to summarize,
+          structure, and verify your logic.
         </p>
         <ul>
-          <li>2 practical challenge levels</li>
-          <li>Instant validation with feedback</li>
-          <li>Unlocked AI workflow after each correct answer</li>
-          <li>Progress saved locally in your browser</li>
+          <li>Each task gives <strong>10 points</strong></li>
+          <li>Using hint in a task costs <strong>3 points</strong></li>
+          <li>Your progress and score are saved in this browser</li>
         </ul>
-        <button id="startBtn" class="primary">Start workshop</button>
+        <button id="startBtn" class="btn btn-primary">Start workshop</button>
       </section>
 
-      <section id="level-1" class="panel challenge hidden" aria-live="polite">
-        <div class="level-header">
-          <h2>Level 1 · Drawing Understanding</h2>
-          <button class="hint-btn" data-level="1">Hint</button>
+      <section id="level-1" class="card hidden" aria-live="polite">
+        <div class="task-grid">
+          <article>
+            <div class="task-head">
+              <h2>Task 1 · Drawing Understanding</h2>
+              <span class="pill">+10 points</span>
+            </div>
+            <p class="scenario">
+              Floor-plan extraction note:
+              <code>L2: A201 Office 24m2, A202 Meeting 18m2, A203 Storage 6m2</code>
+              <br />
+              Solve subtasks to reveal fragments, then submit final unlock code.
+            </p>
+
+            <div class="subtask">
+              <label for="l1Sub1">Subtask A: How many rooms are listed?</label>
+              <div class="row">
+                <input id="l1Sub1" type="text" placeholder="Enter room count" autocomplete="off" />
+                <button class="btn" data-check-subtask="1a">Check</button>
+              </div>
+              <p id="subFeedback1a" class="sub-feedback"></p>
+            </div>
+
+            <div class="subtask">
+              <label for="l1Sub2">Subtask B: What is total area (m2)?</label>
+              <div class="row">
+                <input id="l1Sub2" type="text" placeholder="Enter total area" autocomplete="off" />
+                <button class="btn" data-check-subtask="1b">Check</button>
+              </div>
+              <p id="subFeedback1b" class="sub-feedback"></p>
+            </div>
+
+            <div class="fragments" id="fragments1">
+              <span id="fragment1a" class="fragment hidden">Fragment: RC3</span>
+              <span id="fragment1b" class="fragment hidden">Fragment: TA48</span>
+            </div>
+
+            <p id="codeGuide1" class="guide">Solve subtasks to reveal all code fragments.</p>
+
+            <label for="answer1">Final unlock code</label>
+            <div class="row">
+              <input id="answer1" type="text" placeholder="Example: RC3-TA48" autocomplete="off" />
+              <button class="btn btn-primary" data-submit="1">Unlock</button>
+            </div>
+
+            <div class="actions">
+              <button class="btn btn-ghost hint-btn" data-level="1">Use hint (-3)</button>
+            </div>
+
+            <p id="hint1" class="hint hidden"></p>
+            <p id="feedback1" class="feedback"></p>
+
+            <article id="workflow1" class="workflow hidden">
+              <h3>Unlocked AI Workflow · Drawing Understanding</h3>
+              <ol>
+                <li>Extract room tags and area values from sheets and legends.</li>
+                <li>Convert into a clean room schedule table.</li>
+                <li>Use AI checks for missing tags, area outliers, and duplicates.</li>
+              </ol>
+            </article>
+          </article>
+
+          <aside class="fact-box">
+            <h3>AI Fact</h3>
+            <p><strong>Have you tried Claude/Copilot as a coworker?</strong></p>
+            <p>
+              Paste a drawing note and ask for a structured room table. It can reduce repetitive
+              manual extraction and speed up QA.
+            </p>
+          </aside>
         </div>
-        <p class="scenario">
-          <strong>Scenario:</strong> You receive a floor-plan extraction note:
-          <br />
-          <code>
-            L2 plan: A201 Office 24m2, A202 Meeting 18m2, A203 Storage 6m2
-          </code>
-          <br />
-          Create the summary code format <code>RCx-TAy</code> where:
-          <br />
-          <code>x = room count</code>, <code>y = total area</code>.
-        </p>
-        <label for="answer1">Enter code</label>
-        <input id="answer1" type="text" placeholder="Example: RC3-TA48" autocomplete="off" />
-        <div class="actions">
-          <button class="primary" data-submit="1">Submit answer</button>
-        </div>
-        <p id="hint1" class="hint hidden"></p>
-        <p id="feedback1" class="feedback"></p>
-        <article id="workflow1" class="workflow hidden">
-          <h3>Unlocked: AI Workflow · Drawing Understanding</h3>
-          <ol>
-            <li>Extract room tags and area values from drawing text/legend.</li>
-            <li>Normalize values into a table (room, type, area, level).</li>
-            <li>Run rule checks (missing tags, area anomalies, duplicates).</li>
-            <li>Generate structured outputs for cost, scheduling, and coordination.</li>
-          </ol>
-        </article>
       </section>
 
-      <section id="level-2" class="panel challenge hidden" aria-live="polite">
-        <div class="level-header">
-          <h2>Level 2 · Issue Coordination</h2>
-          <button class="hint-btn" data-level="2">Hint</button>
+      <section id="level-2" class="card hidden" aria-live="polite">
+        <div class="task-grid">
+          <article>
+            <div class="task-head">
+              <h2>Task 2 · Issue Coordination</h2>
+              <span class="pill">+10 points</span>
+            </div>
+            <p class="scenario">
+              Coordination notes:
+              <code>"Leak near RM-305", "Clash at room 201 duct", "Follow-up room201", "Sensor offline in RM 402", "Ignore trailer log"</code>
+              <br />
+              Solve subtasks and build the final code.
+            </p>
+
+            <div class="subtask">
+              <label for="l2Sub1">Subtask A: List unique affected rooms (ascending).</label>
+              <div class="row">
+                <input id="l2Sub1" type="text" placeholder="Example: 201, 305, 402" autocomplete="off" />
+                <button class="btn" data-check-subtask="2a">Check</button>
+              </div>
+              <p id="subFeedback2a" class="sub-feedback"></p>
+            </div>
+
+            <div class="subtask">
+              <label for="l2Sub2">Subtask B: How many unique rooms are affected?</label>
+              <div class="row">
+                <input id="l2Sub2" type="text" placeholder="Enter count" autocomplete="off" />
+                <button class="btn" data-check-subtask="2b">Check</button>
+              </div>
+              <p id="subFeedback2b" class="sub-feedback"></p>
+            </div>
+
+            <div class="fragments" id="fragments2">
+              <span id="fragment2a" class="fragment hidden">Fragment: IMPACT</span>
+              <span id="fragment2b" class="fragment hidden">Fragment: 201-305-402</span>
+            </div>
+
+            <p id="codeGuide2" class="guide">Solve subtasks to reveal all code fragments.</p>
+
+            <label for="answer2">Final unlock code</label>
+            <div class="row">
+              <input id="answer2" type="text" placeholder="Example: IMPACT-201-305-402" autocomplete="off" />
+              <button class="btn btn-primary" data-submit="2">Unlock</button>
+            </div>
+
+            <div class="actions">
+              <button class="btn btn-ghost hint-btn" data-level="2">Use hint (-3)</button>
+            </div>
+
+            <p id="hint2" class="hint hidden"></p>
+            <p id="feedback2" class="feedback"></p>
+
+            <article id="workflow2" class="workflow hidden">
+              <h3>Unlocked AI Workflow · Multi-Source Issue Triage</h3>
+              <ol>
+                <li>Collect issue text from BIM tickets, logs, and emails.</li>
+                <li>Extract room IDs and de-duplicate automatically.</li>
+                <li>Generate a coordination priority list linked to model zones.</li>
+              </ol>
+            </article>
+          </article>
+
+          <aside class="fact-box">
+            <h3>AI Fact</h3>
+            <p><strong>AI can reduce coordination noise.</strong></p>
+            <p>
+              Ask AI to cluster similar issue descriptions and identify common locations. Teams can
+              focus meetings on high-impact rooms first.
+            </p>
+          </aside>
         </div>
-        <p class="scenario">
-          <strong>Scenario:</strong> Coordination notes are inconsistent:
-          <br />
-          <code>
-            "Leak near RM-305 ceiling", "Clash at room 201 duct route",
-            "Follow-up: room201 access panel", "Sensor offline in RM 402",
-            "Ignore temp trailer log"
-          </code>
-          <br />
-          Identify affected rooms and submit in format <code>IMPACT-xxx-yyy-zzz</code>
-          (room numbers only, ascending).
-        </p>
-        <label for="answer2">Enter impact code</label>
-        <input id="answer2" type="text" placeholder="Example: IMPACT-201-305-402" autocomplete="off" />
-        <div class="actions">
-          <button class="primary" data-submit="2">Submit answer</button>
-        </div>
-        <p id="hint2" class="hint hidden"></p>
-        <p id="feedback2" class="feedback"></p>
-        <article id="workflow2" class="workflow hidden">
-          <h3>Unlocked: AI Workflow · Multi-Source Issue Triage</h3>
-          <ol>
-            <li>Aggregate issue text from BIM tickets, email, and site logs.</li>
-            <li>Entity extraction for room IDs, disciplines, and severity.</li>
-            <li>Deduplicate references and map to model locations.</li>
-            <li>Auto-generate coordination priority list with traceable rationale.</li>
-          </ol>
-        </article>
       </section>
     </main>
+
+    <footer class="footer">
+      <button id="resetProgressBtn" class="btn btn-ghost">Reset local progress</button>
+    </footer>
   </div>
 
   <script src="app.js"></script>

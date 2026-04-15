@@ -1,54 +1,132 @@
-const STORAGE_KEY = "aeco_ai_workshop_progress_v1";
+const STORAGE_KEY = "symetri_workshop_state_v2";
+const STORAGE_TTL_MS = 1000 * 60 * 60 * 24 * 14;
 
 const state = {
-  solved: {
-    1: false,
-    2: false,
+  score: 0,
+  solved: { 1: false, 2: false },
+  hintsUsed: { 1: false, 2: false },
+  subtasks: {
+    1: { a: false, b: false },
+    2: { a: false, b: false },
   },
+  updatedAt: 0,
 };
 
 const hints = {
-  1: "Count the number of rooms, then add their area values: 24 + 18 + 6.",
-  2: "Extract only unique room numbers from issue text, ignore non-room items, then sort ascending.",
+  1: "Count rooms first, then sum areas: 24 + 18 + 6.",
+  2: "Extract only room IDs from notes, remove duplicates, then sort ascending.",
 };
 
 function normalize(value) {
-  return (value || "")
-    .toUpperCase()
-    .replace(/\s+/g, "")
-    .replace(/_/g, "-");
+  return (value || "").toUpperCase().replace(/\s+/g, "").replace(/_/g, "-");
+}
+
+function parseRoomNumbers(input) {
+  const matches = (input || "").match(/\d{3}/g) || [];
+  return [...new Set(matches)].map(Number).sort((a, b) => a - b);
 }
 
 function saveProgress() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state.solved));
+  state.updatedAt = Date.now();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function resetState() {
+  state.score = 0;
+  state.solved = { 1: false, 2: false };
+  state.hintsUsed = { 1: false, 2: false };
+  state.subtasks = {
+    1: { a: false, b: false },
+    2: { a: false, b: false },
+  };
+  state.updatedAt = Date.now();
 }
 
 function loadProgress() {
   try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (saved && typeof saved === "object") {
-      state.solved[1] = !!saved[1];
-      state.solved[2] = !!saved[2];
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+
+    const saved = JSON.parse(raw);
+    if (!saved || typeof saved !== "object") return;
+
+    if (!saved.updatedAt || Date.now() - saved.updatedAt > STORAGE_TTL_MS) {
+      localStorage.removeItem(STORAGE_KEY);
+      return;
     }
+
+    state.score = Number(saved.score) || 0;
+    state.solved = {
+      1: !!saved?.solved?.[1],
+      2: !!saved?.solved?.[2],
+    };
+    state.hintsUsed = {
+      1: !!saved?.hintsUsed?.[1],
+      2: !!saved?.hintsUsed?.[2],
+    };
+    state.subtasks = {
+      1: {
+        a: !!saved?.subtasks?.[1]?.a,
+        b: !!saved?.subtasks?.[1]?.b,
+      },
+      2: {
+        a: !!saved?.subtasks?.[2]?.a,
+        b: !!saved?.subtasks?.[2]?.b,
+      },
+    };
+    state.updatedAt = saved.updatedAt;
   } catch {
-    state.solved = { 1: false, 2: false };
+    resetState();
   }
 }
 
-function updateProgressUI() {
+function updateStatsUI() {
   const solvedCount = Number(state.solved[1]) + Number(state.solved[2]);
-  document.getElementById("progressText").textContent = `Progress: ${solvedCount} / 2 solved`;
+  document.getElementById("progressText").textContent = `${solvedCount} / 2`;
+  document.getElementById("scoreText").textContent = String(state.score);
 
-  const level2Nav = document.querySelector('.nav-link[data-target="level-2"]');
-  level2Nav.disabled = !state.solved[1];
-  level2Nav.title = state.solved[1] ? "" : "Solve Level 1 to unlock";
+  const level2Tab = document.querySelector('.tab[data-target="level-2"]');
+  level2Tab.disabled = !state.solved[1];
 
-  if (state.solved[1]) {
-    document.getElementById("workflow1").classList.remove("hidden");
+  if (state.solved[1]) document.getElementById("workflow1").classList.remove("hidden");
+  if (state.solved[2]) document.getElementById("workflow2").classList.remove("hidden");
+}
+
+function updateSubtaskUI(level, key) {
+  const isDone = state.subtasks[level][key];
+  const fragmentEl = document.getElementById(`fragment${level}${key}`);
+  if (fragmentEl) {
+    fragmentEl.classList.toggle("hidden", !isDone);
   }
-  if (state.solved[2]) {
-    document.getElementById("workflow2").classList.remove("hidden");
+
+  const allDone = state.subtasks[level].a && state.subtasks[level].b;
+  const guide = document.getElementById(`codeGuide${level}`);
+
+  if (!guide) return;
+
+  if (!allDone) {
+    guide.textContent = "Solve subtasks to reveal all code fragments.";
+    return;
   }
+
+  guide.textContent = level === 1
+    ? "Fragments complete. Build final code: RC3-TA48"
+    : "Fragments complete. Build final code: IMPACT-201-305-402";
+}
+
+function renderSubtaskState() {
+  [1, 2].forEach((level) => {
+    ["a", "b"].forEach((key) => {
+      updateSubtaskUI(level, key);
+    });
+  });
+}
+
+function setSubtaskFeedback(level, key, ok, message) {
+  const el = document.getElementById(`subFeedback${level}${key}`);
+  if (!el) return;
+  el.textContent = message;
+  el.style.color = ok ? "#047857" : "#b91c1c";
 }
 
 function setFeedback(level, ok, message) {
@@ -59,87 +137,142 @@ function setFeedback(level, ok, message) {
 }
 
 function showSection(sectionId) {
-  const sections = ["start", "level-1", "level-2"];
-  sections.forEach((id) => {
+  ["start", "level-1", "level-2"].forEach((id) => {
     document.getElementById(id).classList.toggle("hidden", id !== sectionId);
   });
 
-  document.querySelectorAll(".nav-link").forEach((btn) => {
+  document.querySelectorAll(".tab").forEach((btn) => {
     btn.classList.toggle("active", btn.dataset.target === sectionId);
   });
 }
 
-function parseRoomNumbers(input) {
-  const matches = (input || "").match(/\d{3}/g) || [];
-  return [...new Set(matches)].map(Number).sort((a, b) => a - b);
-}
-
-function validateLevel1(rawInput) {
+function validateSubtask(level, key, rawInput) {
   const input = normalize(rawInput);
 
-  if (input.includes("RC3") && input.includes("TA48")) {
-    return true;
+  if (level === 1 && key === "a") {
+    return Number(input) === 3;
   }
 
-  const compact = input.replace(/-/g, "");
-  return compact === "RC3TA48" || compact === "3ROOM48";
+  if (level === 1 && key === "b") {
+    return Number(input) === 48;
+  }
+
+  if (level === 2 && key === "a") {
+    const expected = [201, 305, 402];
+    const rooms = parseRoomNumbers(rawInput);
+    return rooms.length === 3 && expected.every((x, i) => x === rooms[i]);
+  }
+
+  if (level === 2 && key === "b") {
+    return Number(input) === 3;
+  }
+
+  return false;
 }
 
-function validateLevel2(rawInput) {
-  const normalized = normalize(rawInput);
-  const rooms = parseRoomNumbers(normalized);
-  const expected = [201, 305, 402];
+function allSubtasksDone(level) {
+  return state.subtasks[level].a && state.subtasks[level].b;
+}
 
-  const sameRooms =
-    rooms.length === expected.length &&
-    expected.every((value, index) => rooms[index] === value);
+function validateFinal(level, rawInput) {
+  const input = normalize(rawInput);
 
-  if (!sameRooms) {
-    return false;
+  if (level === 1) {
+    const compact = input.replace(/-/g, "");
+    return compact === "RC3TA48";
   }
 
-  return normalized.includes("IMPACT") || /201\D*305\D*402/.test(normalized);
+  const rooms = parseRoomNumbers(input);
+  const expected = [201, 305, 402];
+  const sameRooms = rooms.length === 3 && expected.every((value, index) => value === rooms[index]);
+  return sameRooms && input.includes("IMPACT");
+}
+
+function awardTaskPoints(level) {
+  if (state.solved[level]) return;
+  state.score += 10;
+}
+
+function useHint(level) {
+  const hintEl = document.getElementById(`hint${level}`);
+  hintEl.textContent = hints[level];
+  hintEl.classList.remove("hidden");
+
+  if (!state.hintsUsed[level] && !state.solved[level]) {
+    state.hintsUsed[level] = true;
+    state.score = Math.max(0, state.score - 3);
+    updateStatsUI();
+    saveProgress();
+  }
 }
 
 function unlockLevel(level) {
-  state.solved[level] = true;
-  saveProgress();
-  updateProgressUI();
+  if (!state.solved[level]) {
+    awardTaskPoints(level);
+    state.solved[level] = true;
+  }
 
   document.getElementById(`workflow${level}`).classList.remove("hidden");
 
   if (level === 1) {
-    const level2Nav = document.querySelector('.nav-link[data-target="level-2"]');
-    level2Nav.disabled = false;
+    document.querySelector('.tab[data-target="level-2"]').disabled = false;
   }
+
+  updateStatsUI();
+  saveProgress();
 }
 
 function submitLevel(level) {
   const answer = document.getElementById(`answer${level}`).value;
 
-  if (!answer.trim()) {
-    setFeedback(level, false, "Please enter an answer first.");
+  if (!allSubtasksDone(level)) {
+    setFeedback(level, false, "Complete both subtasks first to assemble the code.");
     return;
   }
 
-  const isValid = level === 1 ? validateLevel1(answer) : validateLevel2(answer);
+  if (!answer.trim()) {
+    setFeedback(level, false, "Enter final unlock code.");
+    return;
+  }
 
-  if (isValid) {
+  if (validateFinal(level, answer)) {
     unlockLevel(level);
     setFeedback(
       level,
       true,
       level === 1
-        ? "Correct. You transformed unstructured drawing notes into structured data."
-        : "Correct. You isolated affected rooms and formed a reliable impact code."
+        ? "Correct. Task 1 unlocked. Structured extraction complete."
+        : "Correct. Task 2 unlocked. Coordination triage complete."
     );
 
-    if (level === 1) {
-      showSection("level-2");
-    }
+    if (level === 1) showSection("level-2");
   } else {
-    setFeedback(level, false, "Not quite. Re-check the scenario and formatting hints.");
+    setFeedback(level, false, "Code is not correct yet. Recheck fragments and format.");
   }
+}
+
+function checkSubtask(level, key) {
+  if (level === 2 && !state.solved[1]) {
+    setSubtaskFeedback(level, key, false, "Task 2 is locked. Solve Task 1 first.");
+    return;
+  }
+
+  const inputId = level === 1
+    ? key === "a" ? "l1Sub1" : "l1Sub2"
+    : key === "a" ? "l2Sub1" : "l2Sub2";
+
+  const value = document.getElementById(inputId).value;
+  const ok = validateSubtask(level, key, value);
+
+  if (ok) {
+    state.subtasks[level][key] = true;
+    setSubtaskFeedback(level, key, true, "Correct. Fragment unlocked.");
+  } else {
+    setSubtaskFeedback(level, key, false, "Not correct yet. Try again.");
+  }
+
+  updateSubtaskUI(level, key);
+  saveProgress();
 }
 
 function attachEvents() {
@@ -147,22 +280,25 @@ function attachEvents() {
     showSection("level-1");
   });
 
-  document.querySelectorAll(".nav-link").forEach((btn) => {
+  document.querySelectorAll(".tab").forEach((btn) => {
     btn.addEventListener("click", () => {
-      if (btn.disabled) {
-        return;
-      }
+      if (btn.disabled) return;
       showSection(btn.dataset.target);
+    });
+  });
+
+  document.querySelectorAll("[data-check-subtask]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.checkSubtask;
+      const level = Number(id[0]);
+      const key = id[1];
+      checkSubtask(level, key);
     });
   });
 
   document.querySelectorAll("[data-submit]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const level = Number(btn.dataset.submit);
-      if (level === 2 && !state.solved[1]) {
-        setFeedback(2, false, "Level 2 is locked. Solve Level 1 first.");
-        return;
-      }
       submitLevel(level);
     });
   });
@@ -170,42 +306,46 @@ function attachEvents() {
   document.querySelectorAll(".hint-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       const level = Number(btn.dataset.level);
-      const hintEl = document.getElementById(`hint${level}`);
-      hintEl.textContent = hints[level];
-      hintEl.classList.remove("hidden");
+      useHint(level);
     });
   });
 
   document.getElementById("resetProgressBtn").addEventListener("click", () => {
-    state.solved[1] = false;
-    state.solved[2] = false;
+    resetState();
+    localStorage.removeItem(STORAGE_KEY);
 
     [1, 2].forEach((level) => {
-      document.getElementById(`workflow${level}`).classList.add("hidden");
-      document.getElementById(`feedback${level}`).textContent = "";
-      document.getElementById(`feedback${level}`).classList.remove("ok", "bad");
+      ["a", "b"].forEach((key) => {
+        setSubtaskFeedback(level, key, false, "");
+        document.getElementById(`fragment${level}${key}`).classList.add("hidden");
+      });
+
       document.getElementById(`hint${level}`).classList.add("hidden");
+      document.getElementById(`feedback${level}`).classList.remove("ok", "bad");
+      document.getElementById(`feedback${level}`).textContent = "";
+      document.getElementById(`workflow${level}`).classList.add("hidden");
       document.getElementById(`answer${level}`).value = "";
     });
 
-    saveProgress();
-    updateProgressUI();
+    ["l1Sub1", "l1Sub2", "l2Sub1", "l2Sub2"].forEach((id) => {
+      document.getElementById(id).value = "";
+    });
+
+    renderSubtaskState();
+    updateStatsUI();
     showSection("start");
   });
 }
 
 function init() {
   loadProgress();
-  updateProgressUI();
+  renderSubtaskState();
+  updateStatsUI();
   attachEvents();
 
-  if (state.solved[2]) {
-    showSection("level-2");
-  } else if (state.solved[1]) {
-    showSection("level-1");
-  } else {
-    showSection("start");
-  }
+  if (state.solved[2]) showSection("level-2");
+  else if (state.solved[1]) showSection("level-1");
+  else showSection("start");
 }
 
 init();
