@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AECO AI Workshop</title>
+  <meta name="description" content="Interactive AECO AI workshop challenges" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">AECO AI Workshop</div>
+      <p class="subtitle">BIM Summit Interactive Session</p>
+      <nav class="nav">
+        <button class="nav-link active" data-target="start">Start</button>
+        <button class="nav-link" data-target="level-1">Level 1</button>
+        <button class="nav-link" data-target="level-2">Level 2</button>
+      </nav>
+      <div class="sidebar-footer">
+        <p id="progressText">Progress: 0 / 2 solved</p>
+        <button id="resetProgressBtn" class="ghost">Reset progress</button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <h1>AI for Real-World AECO Decisions</h1>
+      </header>
+
+      <section id="start" class="panel">
+        <h2>Welcome</h2>
+        <p>
+          This mobile-first workshop simulates real AECO complexity: messy notes, mixed data,
+          and time pressure. Use your own reasoning first. AI can help you think faster,
+          structure information, and verify assumptions.
+        </p>
+        <ul>
+          <li>2 practical challenge levels</li>
+          <li>Instant validation with feedback</li>
+          <li>Unlocked AI workflow after each correct answer</li>
+          <li>Progress saved locally in your browser</li>
+        </ul>
+        <button id="startBtn" class="primary">Start workshop</button>
+      </section>
+
+      <section id="level-1" class="panel challenge hidden" aria-live="polite">
+        <div class="level-header">
+          <h2>Level 1 · Drawing Understanding</h2>
+          <button class="hint-btn" data-level="1">Hint</button>
+        </div>
+        <p class="scenario">
+          <strong>Scenario:</strong> You receive a floor-plan extraction note:
+          <br />
+          <code>
+            L2 plan: A201 Office 24m2, A202 Meeting 18m2, A203 Storage 6m2
+          </code>
+          <br />
+          Create the summary code format <code>RCx-TAy</code> where:
+          <br />
+          <code>x = room count</code>, <code>y = total area</code>.
+        </p>
+        <label for="answer1">Enter code</label>
+        <input id="answer1" type="text" placeholder="Example: RC3-TA48" autocomplete="off" />
+        <div class="actions">
+          <button class="primary" data-submit="1">Submit answer</button>
+        </div>
+        <p id="hint1" class="hint hidden"></p>
+        <p id="feedback1" class="feedback"></p>
+        <article id="workflow1" class="workflow hidden">
+          <h3>Unlocked: AI Workflow · Drawing Understanding</h3>
+          <ol>
+            <li>Extract room tags and area values from drawing text/legend.</li>
+            <li>Normalize values into a table (room, type, area, level).</li>
+            <li>Run rule checks (missing tags, area anomalies, duplicates).</li>
+            <li>Generate structured outputs for cost, scheduling, and coordination.</li>
+          </ol>
+        </article>
+      </section>
+
+      <section id="level-2" class="panel challenge hidden" aria-live="polite">
+        <div class="level-header">
+          <h2>Level 2 · Issue Coordination</h2>
+          <button class="hint-btn" data-level="2">Hint</button>
+        </div>
+        <p class="scenario">
+          <strong>Scenario:</strong> Coordination notes are inconsistent:
+          <br />
+          <code>
+            "Leak near RM-305 ceiling", "Clash at room 201 duct route",
+            "Follow-up: room201 access panel", "Sensor offline in RM 402",
+            "Ignore temp trailer log"
+          </code>
+          <br />
+          Identify affected rooms and submit in format <code>IMPACT-xxx-yyy-zzz</code>
+          (room numbers only, ascending).
+        </p>
+        <label for="answer2">Enter impact code</label>
+        <input id="answer2" type="text" placeholder="Example: IMPACT-201-305-402" autocomplete="off" />
+        <div class="actions">
+          <button class="primary" data-submit="2">Submit answer</button>
+        </div>
+        <p id="hint2" class="hint hidden"></p>
+        <p id="feedback2" class="feedback"></p>
+        <article id="workflow2" class="workflow hidden">
+          <h3>Unlocked: AI Workflow · Multi-Source Issue Triage</h3>
+          <ol>
+            <li>Aggregate issue text from BIM tickets, email, and site logs.</li>
+            <li>Entity extraction for room IDs, disciplines, and severity.</li>
+            <li>Deduplicate references and map to model locations.</li>
+            <li>Auto-generate coordination priority list with traceable rationale.</li>
+          </ol>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
