@@ -3,196 +3,368 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Symetri BIM Summit - AI Workshop 2026</title>
+  <title>Symetri BIM Summit – AI Workshop 2026</title>
   <meta name="description" content="Interactive AECO AI workshop challenges" />
   <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js" defer></script>
 </head>
 <body>
-  <div class="app">
-    <header class="site-header">
-      <div>
-        <p class="eyebrow">Symetri BIM Summit</p>
-        <h1>AI Workshop 2026</h1>
-      </div>
-      <div class="stats">
-        <div class="stat"><span>Progress</span><strong id="progressText">0 / 2</strong></div>
-        <div class="stat"><span>Score</span><strong id="scoreText">0</strong></div>
-      </div>
-    </header>
 
-    <nav class="tabs">
-      <button class="tab active" data-target="start">Start</button>
-      <button class="tab" data-target="level-1">Task 1</button>
-      <button class="tab" data-target="level-2">Task 2</button>
+<!-- ─── mobile hamburger ─── -->
+<button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation">☰</button>
+
+<div class="shell">
+
+  <!-- ═══════════ LEFT SIDEBAR ═══════════ -->
+  <aside id="sidebar" class="sidebar">
+    <div class="brand">
+      <strong>Symetri</strong> BIM Summit
+      <span class="brand-sub">AI Workshop 2026</span>
+    </div>
+
+    <nav class="nav">
+      <button class="nav-item active" data-target="start">
+        <span class="nav-icon">—</span> Start
+      </button>
+      <button class="nav-item" data-target="level-1">
+        <span class="nav-icon">1</span> Site Inspection
+      </button>
+      <button class="nav-item locked" data-target="level-2">
+        <span class="nav-icon nav-locked-icon">2</span> Issue Coordination
+      </button>
     </nav>
 
-    <main class="main">
-      <section id="start" class="card">
-        <h2>Welcome to the challenge</h2>
-        <p>
-          Solve tasks in sequence to unlock the next one. Use AI as a thinking assistant to summarize,
-          structure, and verify your logic.
+    <div class="sidebar-score">
+      <div class="score-row"><span>Progress</span><strong id="progressText">0 / 2</strong></div>
+      <div class="score-row"><span>Score</span><strong id="scoreText">0</strong></div>
+    </div>
+
+    <button id="resetProgressBtn" class="btn btn-ghost btn-sm">Reset progress</button>
+  </aside>
+
+  <!-- ═══════════ CENTER CONTENT ═══════════ -->
+  <main class="center">
+
+    <!-- ── START ── -->
+    <section id="start" class="view">
+      <div class="card welcome-card">
+        <h2>Welcome to the BIM Summit AI Challenge</h2>
+        <p class="welcome-lead">
+          A hands-on experience designed to show you how AI can navigate complexity in the real world.
         </p>
-        <ul>
-          <li>Each task gives <strong>10 points</strong></li>
-          <li>Using hint in a task costs <strong>3 points</strong></li>
-          <li>Your progress and score are saved in this browser</li>
-        </ul>
-        <button id="startBtn" class="btn btn-primary">Start workshop</button>
-      </section>
+        <p>
+          Over the next minutes, your group will work through a series of challenges
+          inspired by real project situations — messy data, foreign documents,
+          coordination failures, and technical incidents. Each challenge is designed
+          to be solved faster and smarter with AI. Your job is not just to find the
+          answer, but to figure out <strong>how to ask the right question</strong>.
+        </p>
 
-      <section id="level-1" class="card hidden" aria-live="polite">
-        <div class="task-grid">
-          <article>
-            <div class="task-head">
-              <h2>Task 1 · Drawing Understanding</h2>
-              <span class="pill">+10 points</span>
-            </div>
-            <p class="scenario">
-              Floor-plan extraction note:
-              <code>L2: A201 Office 24m2, A202 Meeting 18m2, A203 Storage 6m2</code>
-              <br />
-              Solve subtasks to reveal fragments, then submit final unlock code.
-            </p>
-
-            <div class="subtask">
-              <label for="l1Sub1">Subtask A: How many rooms are listed?</label>
-              <div class="row">
-                <input id="l1Sub1" type="text" placeholder="Enter room count" autocomplete="off" />
-                <button class="btn" data-check-subtask="1a">Check</button>
-              </div>
-              <p id="subFeedback1a" class="sub-feedback"></p>
-            </div>
-
-            <div class="subtask">
-              <label for="l1Sub2">Subtask B: What is total area (m2)?</label>
-              <div class="row">
-                <input id="l1Sub2" type="text" placeholder="Enter total area" autocomplete="off" />
-                <button class="btn" data-check-subtask="1b">Check</button>
-              </div>
-              <p id="subFeedback1b" class="sub-feedback"></p>
-            </div>
-
-            <div class="fragments" id="fragments1">
-              <span id="fragment1a" class="fragment hidden">Fragment: RC3</span>
-              <span id="fragment1b" class="fragment hidden">Fragment: TA48</span>
-            </div>
-
-            <p id="codeGuide1" class="guide">Solve subtasks to reveal all code fragments.</p>
-
-            <label for="answer1">Final unlock code</label>
-            <div class="row">
-              <input id="answer1" type="text" placeholder="Example: RC3-TA48" autocomplete="off" />
-              <button class="btn btn-primary" data-submit="1">Unlock</button>
-            </div>
-
-            <div class="actions">
-              <button class="btn btn-ghost hint-btn" data-level="1">Use hint (-3)</button>
-            </div>
-
-            <p id="hint1" class="hint hidden"></p>
-            <p id="feedback1" class="feedback"></p>
-
-            <article id="workflow1" class="workflow hidden">
-              <h3>Unlocked AI Workflow · Drawing Understanding</h3>
-              <ol>
-                <li>Extract room tags and area values from sheets and legends.</li>
-                <li>Convert into a clean room schedule table.</li>
-                <li>Use AI checks for missing tags, area outliers, and duplicates.</li>
-              </ol>
-            </article>
-          </article>
-
-          <aside class="fact-box">
-            <h3>AI Fact</h3>
-            <p><strong>Have you tried Claude/Copilot as a coworker?</strong></p>
-            <p>
-              Paste a drawing note and ask for a structured room table. It can reduce repetitive
-              manual extraction and speed up QA.
-            </p>
-          </aside>
+        <div class="welcome-section">
+          <h3>How it works</h3>
+          <p>
+            Each level has one or more tasks. Solving them reveals code fragments.
+            Combine the fragments to unlock the next level.
+          </p>
+          <ul>
+            <li>Each task awards <strong>10 points</strong></li>
+            <li>Using a hint costs <strong>3 points</strong></li>
+            <li>Progress &amp; score are cached in your browser</li>
+          </ul>
         </div>
-      </section>
 
-      <section id="level-2" class="card hidden" aria-live="polite">
-        <div class="task-grid">
-          <article>
-            <div class="task-head">
-              <h2>Task 2 · Issue Coordination</h2>
-              <span class="pill">+10 points</span>
-            </div>
-            <p class="scenario">
-              Coordination notes:
-              <code>"Leak near RM-305", "Clash at room 201 duct", "Follow-up room201", "Sensor offline in RM 402", "Ignore trailer log"</code>
-              <br />
-              Solve subtasks and build the final code.
-            </p>
-
-            <div class="subtask">
-              <label for="l2Sub1">Subtask A: List unique affected rooms (ascending).</label>
-              <div class="row">
-                <input id="l2Sub1" type="text" placeholder="Example: 201, 305, 402" autocomplete="off" />
-                <button class="btn" data-check-subtask="2a">Check</button>
-              </div>
-              <p id="subFeedback2a" class="sub-feedback"></p>
-            </div>
-
-            <div class="subtask">
-              <label for="l2Sub2">Subtask B: How many unique rooms are affected?</label>
-              <div class="row">
-                <input id="l2Sub2" type="text" placeholder="Enter count" autocomplete="off" />
-                <button class="btn" data-check-subtask="2b">Check</button>
-              </div>
-              <p id="subFeedback2b" class="sub-feedback"></p>
-            </div>
-
-            <div class="fragments" id="fragments2">
-              <span id="fragment2a" class="fragment hidden">Fragment: IMPACT</span>
-              <span id="fragment2b" class="fragment hidden">Fragment: 201-305-402</span>
-            </div>
-
-            <p id="codeGuide2" class="guide">Solve subtasks to reveal all code fragments.</p>
-
-            <label for="answer2">Final unlock code</label>
-            <div class="row">
-              <input id="answer2" type="text" placeholder="Example: IMPACT-201-305-402" autocomplete="off" />
-              <button class="btn btn-primary" data-submit="2">Unlock</button>
-            </div>
-
-            <div class="actions">
-              <button class="btn btn-ghost hint-btn" data-level="2">Use hint (-3)</button>
-            </div>
-
-            <p id="hint2" class="hint hidden"></p>
-            <p id="feedback2" class="feedback"></p>
-
-            <article id="workflow2" class="workflow hidden">
-              <h3>Unlocked AI Workflow · Multi-Source Issue Triage</h3>
-              <ol>
-                <li>Collect issue text from BIM tickets, logs, and emails.</li>
-                <li>Extract room IDs and de-duplicate automatically.</li>
-                <li>Generate a coordination priority list linked to model zones.</li>
-              </ol>
-            </article>
-          </article>
-
-          <aside class="fact-box">
-            <h3>AI Fact</h3>
-            <p><strong>AI can reduce coordination noise.</strong></p>
-            <p>
-              Ask AI to cluster similar issue descriptions and identify common locations. Teams can
-              focus meetings on high-impact rooms first.
-            </p>
-          </aside>
+        <div class="welcome-section">
+          <h3>Your tools</h3>
+          <p>
+            Use any AI you like — ChatGPT, Claude, Gemini, Copilot, whatever works.
+            Use your phone, the shared screen, or just talk it through together.
+          </p>
         </div>
-      </section>
-    </main>
 
-    <footer class="footer">
-      <button id="resetProgressBtn" class="btn btn-ghost">Reset local progress</button>
-    </footer>
-  </div>
+        <div class="welcome-section">
+          <h3>The spirit of this challenge</h3>
+          <dl class="spirit-list">
+            <div class="spirit-item">
+              <dt>Split the work</dt>
+              <dd>Some tasks have natural subtasks — divide them across the group and report back.</dd>
+            </div>
+            <div class="spirit-item">
+              <dt>Share what you learn</dt>
+              <dd>If someone finds a better prompt or a smarter approach, tell the group.</dd>
+            </div>
+            <div class="spirit-item">
+              <dt>Question the output</dt>
+              <dd>AI can be wrong. Use your domain knowledge to validate what it tells you.</dd>
+            </div>
+            <div class="spirit-item">
+              <dt>Talk out loud</dt>
+              <dd>The best insights come from discussing — not just from whoever is typing.</dd>
+            </div>
+          </dl>
+        </div>
 
-  <script src="app.js"></script>
+        <button id="startBtn" class="btn btn-primary btn-start">Start challenge</button>
+      </div>
+    </section>
+
+    <!-- ── TASK 1 ── -->
+    <section id="level-1" class="view hidden" aria-live="polite">
+      <div class="card">
+        <div class="task-head">
+          <h2>Task 1 · The Damaged Building</h2>
+          <span class="pill">+10 pts</span>
+        </div>
+
+        <p class="scenario">
+          You have received a confidential site inspection report from an ongoing
+          hotel renovation project. Study the report and the floor plan carefully,
+          then answer the subtasks below. The correct answers will reveal fragments
+          of a 6-digit unlock code.
+        </p>
+
+        <!-- Document & floorplan -->
+        <div class="doc-section">
+          <div class="doc-actions">
+            <a href="assets/HPR-Report.docx" target="_blank" class="btn btn-sm">Download report (.docx)</a>
+          </div>
+          <div class="text-viewer" tabindex="0">
+            <p><strong>Huanglong Palace Hotel — Renovation Project</strong><br />Site Progress &amp; Defect Inspection Report &middot; Q4 2024</p>
+            <p>The Huanglong Palace Hotel renovation project (contract reference HPR-2024-031, total contract value CNY 48,750,000, equivalent to approximately EUR 6,230,000) reached an overall completion level of 71% as of 31 October 2024, against a programme target of 74% for the same date. The site covers a gross internal floor area of 8,640 m&sup2; across three levels, and the current reporting period runs from 1 October to 31 October 2024. Budget draw-down to date stands at CNY 33,420,000, representing 68.5% of the contract value. The forecast final cost remains within the approved contingency envelope of CNY 2,100,000, although this position is under pressure from several unresolved defect items described in detail below.</p>
+            <p>All fifteen rooms on the ground floor plan were inspected during the week of 4&ndash;8 November 2024. The majority of spaces are progressing well. The Main Lobby is 88% complete, with the feature chandelier commissioned and tested on 1 November and the reception counter stonework finished to an excellent standard &mdash; no defects were recorded in this room. The Banquet Hall, the largest and highest-value space on the project at 580 m&sup2;, reached 83% completion and drew positive feedback from the client during a preview walkthrough on 4 November; the decorative ceiling works were noted as being of exceptional quality, and the sprinkler system was pressure-tested and certified on 29 October. The Courtyard is 96% complete and considered ready for client inspection, with drainage, planting, and irrigation all signed off. The Tea Room achieved an acoustic performance of Rw 47dB against a target of Rw 45dB, a result the project team regards as a positive outcome. The Entrance Lobby, Service Desk, Platform, Entertainment Room, and Overhead Passage are all advancing without critical issues, with only minor snagging items recorded.</p>
+            <p>However, four spaces are currently carrying critical defect notices that must be resolved before practical completion can be certified, and it is these areas that represent the principal risk to both the programme and the project budget. The first is the Small Dining Room, where the mechanical ventilation installation has been found non-compliant with design specification HPR-M-09 and with national code GB50736-2012. The air change rate measured on site is 4.2 ACH against a required minimum of 8.0 ACH, a shortfall caused by the subcontractor installing a Daikin VAM500FC unit in place of the specified VAM1000FC. Replacement units have been ordered but carry a lead time of six to eight weeks from the Shanghai warehouse. The contract milestone for practical completion of this space, originally set for 30 October 2024, is now forecast no earlier than 20 December, with liquidated damages accruing at CNY 4,500 per day; cumulative exposure at the report date stands at CNY 18,000. The screed in this room also shows cracking across approximately 22 m&sup2;, with crack widths of 0.4 to 1.1 mm, consistent with inadequate curing time, and full replacement of the screed layer is recommended before the final floor finish is laid.</p>
+            <p>The second critical space is the Kitchen, where extensive moisture damage has been identified across the floor slab and lower wall zones. Water ingress has been confirmed as originating from a failed waterproof membrane at the junction of the drainage channel and the main floor slab, installed by Chengdu Waterproofing Solutions on 14 June 2024 under invoice reference CWS-2024-0441 at a value of CNY 192,000. Moisture content readings taken on 7 November recorded values of 38 to 52% in at least three locations, against a specification maximum of 5%. All equipment installation has been suspended pending a structural engineer&rsquo;s report due on 14 November. The worst-case remediation cost is estimated at CNY 340,000, and programme impact is assessed at fourteen to eighteen working days. Insurance notification has been submitted under claim reference PICC-HPR-2024-1107. Separately, the gas supply rough-in to cooking positions 3 and 4 does not match approved layout drawing HPR-P-07 Rev. 1, and remedial re-routing is estimated at a further CNY 23,500.</p>
+            <p>The third area of critical concern is the Salon, where the electrical installation failed its first-fix inspection on 7 November. Three non-compliances were identified: the isolator switch position for the basin unit does not meet the minimum clearance requirements of GB 16895.15; earthing continuity between the main bonding conductor and the metal sink unit is entirely absent, which the approved inspector has classified as a Category A dangerous fault; and the cable containment in the ceiling void uses an unapproved tray type not listed on the approved materials schedule. Electrical works have been red-tagged and must not be energised until a full remediation plan is submitted and approved by 14 November. Estimated remediation cost is CNY 64,000 including re-inspection fees, and the programme impact is a minimum of ten working days, with knock-on effects to tiling and fit-out works that cannot proceed until first-fix is signed off. This space sits on the critical path for the overall programme.</p>
+            <p>The fourth and most urgent critical issue concerns the Main Entrance, where a crack of 3.2 mm width and approximately 1.4 metres in length has been identified in the reinforced concrete canopy beam above the entrance doors. The crack runs diagonally from the east bearing point at roughly 45 degrees, consistent with shear stress rather than settlement. Professor Li Wei of Sichuan University&rsquo;s Civil Engineering Department attended site on 8 November and has classified the crack as requiring immediate investigation. Temporary propping is to be installed by 12 November, and monitoring studs have been placed on either side of the crack; the baseline reading taken on 8 November was 3.21 mm, with a second reading due on 12 November. If widening is recorded, temporary closure of the entrance will be required. The estimated investigation and remediation cost ranges from CNY 220,000 to CNY 480,000 depending on the outcome of the structural assessment. The matter has been escalated to the project director and an emergency board meeting is scheduled for 11 November at 09:00 CST. The total estimated value at risk across all open defect items is CNY 1,285,000.</p>
+            <p>In summary, the four spaces requiring urgent attention are the Small Dining Room, the Kitchen, the Salon, and the Main Entrance. The project team is requested to treat these as the highest priority for the period leading up to the next inspection visit, scheduled for 2&ndash;6 December 2024. All other areas are progressing within acceptable tolerances and do not require escalation at this stage.</p>
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <h3>Floor Plan</h3>
+          <div class="img-frame img-frame-thumb" id="floorplanThumb">
+            <img src="assets/chinese-floorplan.png" alt="Hotel renovation floor plan" loading="lazy" />
+            <span class="img-expand-label">Click to enlarge</span>
+          </div>
+        </div>
+
+        <!-- Lightbox -->
+        <div id="lightbox" class="lightbox hidden" role="dialog" aria-label="Enlarged floor plan">
+          <button class="lightbox-close" id="lightboxClose" aria-label="Close">&times;</button>
+          <img src="assets/chinese-floorplan.png" alt="Hotel renovation floor plan – enlarged" />
+        </div>
+
+        <!-- subtask A -->
+        <div class="subtask">
+          <label for="l1Sub1">Subtask A – According to the report, which floor suffered the most severe structural damage?</label>
+          <div class="row">
+            <input id="l1Sub1" type="text" placeholder="Enter floor number" autocomplete="off" />
+            <button class="btn" data-check-subtask="1a">Check</button>
+          </div>
+          <p id="subFeedback1a" class="sub-feedback"></p>
+        </div>
+
+        <!-- subtask B -->
+        <div class="subtask">
+          <label for="l1Sub2">Subtask B – How many rooms on the floor plan are marked as restricted / off-limits?</label>
+          <div class="row">
+            <input id="l1Sub2" type="text" placeholder="Enter count" autocomplete="off" />
+            <button class="btn" data-check-subtask="1b">Check</button>
+          </div>
+          <p id="subFeedback1b" class="sub-feedback"></p>
+        </div>
+
+        <div class="fragments" id="fragments1">
+          <span id="fragment1a" class="fragment hidden">581</span>
+          <span id="fragment1b" class="fragment hidden">114</span>
+        </div>
+        <p id="codeGuide1" class="guide">Solve subtasks to reveal all code fragments.</p>
+
+        <label for="answer1">Enter the 6-digit unlock code</label>
+        <div class="row">
+          <input id="answer1" type="text" placeholder="6-digit code" maxlength="6" autocomplete="off" />
+          <button class="btn btn-primary" data-submit="1">Unlock →</button>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-ghost btn-sm hint-btn" data-level="1">Hint (−3 pts)</button>
+        </div>
+        <p id="hint1" class="hint hidden"></p>
+        <p id="feedback1" class="feedback"></p>
+
+        <article id="workflow1" class="workflow hidden">
+          <h3>Unlocked – AI Workflow: Site Inspection Analysis</h3>
+          <ol>
+            <li>Feed inspection reports (PDF / DOCX) into an AI assistant.</li>
+            <li>Extract key findings: damage locations, severity ratings, restricted zones.</li>
+            <li>Cross-reference with floor plans to auto-generate a visual damage heat-map.</li>
+            <li>Produce a structured action list prioritised by safety risk.</li>
+          </ol>
+        </article>
+      </div>
+
+      <!-- Python sandbox -->
+      <details class="card tool-card">
+        <summary>Python Sandbox</summary>
+        <p class="tool-desc">Try extracting structured data from the report text with Python.</p>
+        <textarea id="pyEditor1" class="py-editor" rows="6" spellcheck="false">report_floors = {"B1": "minor", "1F": "moderate", "5F": "severe", "8F": "cosmetic"}
+worst = max(report_floors, key=lambda f: ["cosmetic","minor","moderate","severe"].index(report_floors[f]))
+print(f"Most severe damage: floor {worst}")</textarea>
+        <button class="btn btn-sm" data-run-py="pyEditor1" data-output="pyOut1">▶ Run</button>
+        <pre id="pyOut1" class="py-output"></pre>
+      </details>
+    </section>
+
+    <!-- ── TASK 2 ── -->
+    <section id="level-2" class="view hidden" aria-live="polite">
+      <div class="card">
+        <div class="task-head">
+          <h2>Task 2 · Issue Coordination</h2>
+          <span class="pill">+10 pts</span>
+        </div>
+
+        <p class="scenario">Coordination notes from various sources:</p>
+        <pre class="code-viewer"><code>1  "Leak near RM-305 ceiling"
+2  "Clash at room 201 duct route"
+3  "Follow-up: room201 access panel"
+4  "Sensor offline in RM 402"
+5  "Ignore temp trailer log"</code></pre>
+
+        <p class="scenario">
+          Identify affected rooms and build format <code>IMPACT-xxx-yyy-zzz</code> (ascending).
+        </p>
+
+        <!-- subtask A -->
+        <div class="subtask">
+          <label for="l2Sub1">Subtask A – List unique affected rooms (ascending)</label>
+          <div class="row">
+            <input id="l2Sub1" type="text" placeholder="201, 305, 402" autocomplete="off" />
+            <button class="btn" data-check-subtask="2a">Check</button>
+          </div>
+          <p id="subFeedback2a" class="sub-feedback"></p>
+        </div>
+
+        <!-- subtask B -->
+        <div class="subtask">
+          <label for="l2Sub2">Subtask B – How many unique rooms?</label>
+          <div class="row">
+            <input id="l2Sub2" type="text" placeholder="Count" autocomplete="off" />
+            <button class="btn" data-check-subtask="2b">Check</button>
+          </div>
+          <p id="subFeedback2b" class="sub-feedback"></p>
+        </div>
+
+        <div class="fragments" id="fragments2">
+          <span id="fragment2a" class="fragment hidden">IMPACT</span>
+          <span id="fragment2b" class="fragment hidden">201-305-402</span>
+        </div>
+        <p id="codeGuide2" class="guide">Solve subtasks to reveal all code fragments.</p>
+
+        <label for="answer2">Final unlock code</label>
+        <div class="row">
+          <input id="answer2" type="text" placeholder="IMPACT-201-305-402" autocomplete="off" />
+          <button class="btn btn-primary" data-submit="2">Unlock →</button>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-ghost btn-sm hint-btn" data-level="2">Hint (−3 pts)</button>
+        </div>
+        <p id="hint2" class="hint hidden"></p>
+        <p id="feedback2" class="feedback"></p>
+
+        <article id="workflow2" class="workflow hidden">
+          <h3>Unlocked – AI Workflow: Multi-Source Issue Triage</h3>
+          <ol>
+            <li>Aggregate issue text from BIM tickets, logs, emails.</li>
+            <li>Extract room IDs and de-duplicate.</li>
+            <li>Generate a coordination priority list by zone.</li>
+          </ol>
+        </article>
+      </div>
+
+      <!-- Python sandbox -->
+      <details class="card tool-card">
+        <summary>Python Sandbox</summary>
+        <p class="tool-desc">Parse the messy notes programmatically.</p>
+        <textarea id="pyEditor2" class="py-editor" rows="8" spellcheck="false">import re
+notes = [
+    "Leak near RM-305 ceiling",
+    "Clash at room 201 duct route",
+    "Follow-up: room201 access panel",
+    "Sensor offline in RM 402",
+    "Ignore temp trailer log",
+]
+rooms = sorted(set(int(m) for n in notes for m in re.findall(r"\d{3}", n)))
+print("Affected rooms:", rooms)</textarea>
+        <button class="btn btn-sm" data-run-py="pyEditor2" data-output="pyOut2">▶ Run</button>
+        <pre id="pyOut2" class="py-output"></pre>
+      </details>
+
+      <!-- Code viewer -->
+      <details class="card tool-card">
+        <summary>Code Viewer – sample coordination script</summary>
+        <pre class="code-viewer"><code>import re, json
+
+def extract_rooms(notes):
+    """Return sorted unique room IDs from free-text notes."""
+    ids = set()
+    for note in notes:
+        ids.update(re.findall(r"\d{3}", note))
+    return sorted(ids, key=int)
+
+rooms = extract_rooms(notes)
+print(json.dumps({"impact_rooms": rooms}, indent=2))</code></pre>
+      </details>
+    </section>
+
+  </main>
+
+  <!-- ═══════════ RIGHT PANEL — FACT BOXES ═══════════ -->
+  <aside id="rightPanel" class="right-panel">
+
+    <!-- shown on Start -->
+    <div class="fact" data-for="start">
+      <h3>Did you know?</h3>
+      <p>
+        AI assistants like <strong>GitHub Copilot</strong> and <strong>Claude</strong>
+        can analyse drawings, extract tables, and generate structured BIM data in seconds.
+      </p>
+    </div>
+
+    <!-- shown on Task 1 -->
+    <div class="fact" data-for="level-1">
+      <h3>AI Fact</h3>
+      <p><strong>Have you tried Claude Coworker?</strong></p>
+      <p>
+        Upload the inspection report and ask AI to extract
+        every damage finding into a structured table. It can
+        save hours of manual reading.
+      </p>
+      <hr />
+      <h4>Try this prompt</h4>
+      <pre class="code-viewer code-sm"><code>"Read this site inspection report
+and list every damaged area with
+floor, room, severity, and
+recommended action."</code></pre>
+    </div>
+
+    <!-- shown on Task 2 -->
+    <div class="fact" data-for="level-2">
+      <h3>AI Fact</h3>
+      <p><strong>AI can reduce coordination noise.</strong></p>
+      <p>
+        Ask AI to cluster similar issue descriptions and identify common locations.
+        Teams can then focus meetings on high-impact rooms first.
+      </p>
+      <hr />
+      <h4>GitHub Copilot in VS Code</h4>
+      <p>
+        Copilot can autocomplete regex patterns and data parsing scripts in seconds — try it live.
+      </p>
+    </div>
+
+  </aside>
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>
