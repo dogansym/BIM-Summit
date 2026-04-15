@@ -188,6 +188,63 @@ body {
   margin: 0.7rem 0;
 }
 
+/* ─── AI-themed fact box ─── */
+.fact-ai {
+  border: 1px solid rgba(0, 169, 157, 0.3);
+  border-radius: var(--radius);
+  background: linear-gradient(160deg, rgba(0, 169, 157, 0.06) 0%, rgba(13, 17, 23, 0) 60%);
+  padding: 0.85rem 0.9rem;
+}
+
+.fact-ai h3 {
+  color: var(--primary);
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+}
+
+.ai-sparkle {
+  display: inline-block;
+  margin-right: 0.25rem;
+  animation: sparkle-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes sparkle-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.fact-ai p {
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+.fact-ai strong {
+  color: var(--text);
+}
+
+.ai-links {
+  margin-top: 0.65rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid rgba(0, 169, 157, 0.18);
+  font-size: 0.78rem;
+}
+
+.ai-links a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.ai-links a:hover {
+  text-decoration: underline;
+}
+
+.ai-link-sep {
+  color: var(--muted);
+  margin: 0 0.3rem;
+}
+
 /* ─── card ─── */
 .card {
   background: var(--card);
@@ -315,6 +372,11 @@ code {
   padding: 0.06rem 0.3rem;
   font-size: 0.88em;
   color: var(--primary);
+}
+
+.btn-next {
+  margin-top: 0.65rem;
+  padding: 0.55rem 1.1rem;
 }
 
 /* ─── inputs ─── */

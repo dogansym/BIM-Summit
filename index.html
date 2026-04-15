@@ -32,6 +32,9 @@
       <button class="nav-item locked" data-target="level-2">
         <span class="nav-icon nav-locked-icon">2</span> Issue Coordination
       </button>
+      <button class="nav-item locked" data-target="level-3">
+        <span class="nav-icon nav-locked-icon">3</span> Coming Soon
+      </button>
     </nav>
 
     <div class="sidebar-score">
@@ -116,10 +119,9 @@
         </div>
 
         <p class="scenario">
-          You have received a confidential site inspection report from an ongoing
-          hotel renovation project. Study the report and the floor plan carefully,
-          then answer the subtasks below. The correct answers will reveal fragments
-          of a 6-digit unlock code.
+          You have received a confidential inspection report and an architectural floor plan 
+          from an ongoing hotel renovation project somewhere in the world. 
+           Study both documents carefully. Find the hidden unlock code.
         </p>
 
         <!-- Document & floorplan -->
@@ -153,32 +155,6 @@
           <img src="assets/chinese-floorplan.png" alt="Hotel renovation floor plan – enlarged" />
         </div>
 
-        <!-- subtask A -->
-        <div class="subtask">
-          <label for="l1Sub1">Subtask A – According to the report, which floor suffered the most severe structural damage?</label>
-          <div class="row">
-            <input id="l1Sub1" type="text" placeholder="Enter floor number" autocomplete="off" />
-            <button class="btn" data-check-subtask="1a">Check</button>
-          </div>
-          <p id="subFeedback1a" class="sub-feedback"></p>
-        </div>
-
-        <!-- subtask B -->
-        <div class="subtask">
-          <label for="l1Sub2">Subtask B – How many rooms on the floor plan are marked as restricted / off-limits?</label>
-          <div class="row">
-            <input id="l1Sub2" type="text" placeholder="Enter count" autocomplete="off" />
-            <button class="btn" data-check-subtask="1b">Check</button>
-          </div>
-          <p id="subFeedback1b" class="sub-feedback"></p>
-        </div>
-
-        <div class="fragments" id="fragments1">
-          <span id="fragment1a" class="fragment hidden">581</span>
-          <span id="fragment1b" class="fragment hidden">114</span>
-        </div>
-        <p id="codeGuide1" class="guide">Solve subtasks to reveal all code fragments.</p>
-
         <label for="answer1">Enter the 6-digit unlock code</label>
         <div class="row">
           <input id="answer1" type="text" placeholder="6-digit code" maxlength="6" autocomplete="off" />
@@ -190,28 +166,8 @@
         </div>
         <p id="hint1" class="hint hidden"></p>
         <p id="feedback1" class="feedback"></p>
-
-        <article id="workflow1" class="workflow hidden">
-          <h3>Unlocked – AI Workflow: Site Inspection Analysis</h3>
-          <ol>
-            <li>Feed inspection reports (PDF / DOCX) into an AI assistant.</li>
-            <li>Extract key findings: damage locations, severity ratings, restricted zones.</li>
-            <li>Cross-reference with floor plans to auto-generate a visual damage heat-map.</li>
-            <li>Produce a structured action list prioritised by safety risk.</li>
-          </ol>
-        </article>
+        <button id="nextTask1" class="btn btn-primary btn-next hidden" data-next="level-2">Go to next task →</button>
       </div>
-
-      <!-- Python sandbox -->
-      <details class="card tool-card">
-        <summary>Python Sandbox</summary>
-        <p class="tool-desc">Try extracting structured data from the report text with Python.</p>
-        <textarea id="pyEditor1" class="py-editor" rows="6" spellcheck="false">report_floors = {"B1": "minor", "1F": "moderate", "5F": "severe", "8F": "cosmetic"}
-worst = max(report_floors, key=lambda f: ["cosmetic","minor","moderate","severe"].index(report_floors[f]))
-print(f"Most severe damage: floor {worst}")</textarea>
-        <button class="btn btn-sm" data-run-py="pyEditor1" data-output="pyOut1">▶ Run</button>
-        <pre id="pyOut1" class="py-output"></pre>
-      </details>
     </section>
 
     <!-- ── TASK 2 ── -->
@@ -270,15 +226,7 @@ print(f"Most severe damage: floor {worst}")</textarea>
         </div>
         <p id="hint2" class="hint hidden"></p>
         <p id="feedback2" class="feedback"></p>
-
-        <article id="workflow2" class="workflow hidden">
-          <h3>Unlocked – AI Workflow: Multi-Source Issue Triage</h3>
-          <ol>
-            <li>Aggregate issue text from BIM tickets, logs, emails.</li>
-            <li>Extract room IDs and de-duplicate.</li>
-            <li>Generate a coordination priority list by zone.</li>
-          </ol>
-        </article>
+        <button id="nextTask2" class="btn btn-primary btn-next hidden" data-next="level-3">Go to next task →</button>
       </div>
 
       <!-- Python sandbox -->
@@ -316,6 +264,28 @@ print(json.dumps({"impact_rooms": rooms}, indent=2))</code></pre>
       </details>
     </section>
 
+    <!-- ── TASK 3 (placeholder) ── -->
+    <section id="level-3" class="view hidden" aria-live="polite">
+      <div class="card">
+        <div class="task-head">
+          <h2>Task 3 · Coming Soon</h2>
+          <span class="pill">+10 pts</span>
+        </div>
+        <p class="scenario">This challenge is not yet available.</p>
+      </div>
+
+      <!-- Python sandbox -->
+      <details class="card tool-card">
+        <summary>Python Sandbox</summary>
+        <p class="tool-desc">Try extracting structured data from the report text with Python.</p>
+        <textarea id="pyEditor1" class="py-editor" rows="6" spellcheck="false">report_floors = {"B1": "minor", "1F": "moderate", "5F": "severe", "8F": "cosmetic"}
+worst = max(report_floors, key=lambda f: ["cosmetic","minor","moderate","severe"].index(report_floors[f]))
+print(f"Most severe damage: floor {worst}")</textarea>
+        <button class="btn btn-sm" data-run-py="pyEditor1" data-output="pyOut1">▶ Run</button>
+        <pre id="pyOut1" class="py-output"></pre>
+      </details>
+    </section>
+
   </main>
 
   <!-- ═══════════ RIGHT PANEL — FACT BOXES ═══════════ -->
@@ -331,20 +301,32 @@ print(json.dumps({"impact_rooms": rooms}, indent=2))</code></pre>
     </div>
 
     <!-- shown on Task 1 -->
-    <div class="fact" data-for="level-1">
-      <h3>AI Fact</h3>
-      <p><strong>Have you tried Claude Coworker?</strong></p>
+    <div class="fact fact-ai" data-for="level-1">
+      <h3><span class="ai-sparkle">✦</span> Did you know?</h3>
       <p>
-        Upload the inspection report and ask AI to extract
-        every damage finding into a structured table. It can
-        save hours of manual reading.
+        The task you are solving right now — reading a report, identifying critical
+        issues, and locating them on a drawing — is exactly what an AI agent can do
+        automatically.
       </p>
-      <hr />
-      <h4>Try this prompt</h4>
-      <pre class="code-viewer code-sm"><code>"Read this site inspection report
-and list every damaged area with
-floor, room, severity, and
-recommended action."</code></pre>
+      <p>
+        <strong>Claude Coworker</strong> can connect directly to your Google Drive or
+        Word documents and read them without any copy-pasting. With an
+        <strong>MCP server</strong> for Autodesk Forma or ACC, Claude can go one step
+        further: analyse the report and create structured issues or RFIs directly in
+        your project platform — no manual data entry, no switching tools.
+      </p>
+      <p>
+        The same workflow applies to Revit, Navisworks, and other platforms through
+        MCP integrations. What your group is spending minutes on today, a connected
+        AI agent could handle in seconds.
+      </p>
+      <div class="ai-links">
+        <a href="https://claude.ai" target="_blank" rel="noopener">claude.ai</a>
+        <span class="ai-link-sep">·</span>
+        <a href="https://www.autodesk.com/company/autodesk-platform/aec" target="_blank" rel="noopener">Autodesk Forma</a>
+        <span class="ai-link-sep">·</span>
+        <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">modelcontextprotocol.io</a>
+      </div>
     </div>
 
     <!-- shown on Task 2 -->

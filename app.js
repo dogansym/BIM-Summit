@@ -9,12 +9,12 @@ const state = {
   score: 0,
   solved: { 1: false, 2: false },
   hintsUsed: { 1: false, 2: false },
-  subtasks: { 1: { a: false, b: false }, 2: { a: false, b: false } },
+  subtasks: { 1: { a: true, b: true }, 2: { a: false, b: false } },
   updatedAt: 0,
 };
 
 const hints = {
-  1: "Read the report carefully for severity keywords. Check the floor plan legend for restricted-zone markings.",
+  1: "Use this prompt and upload both files: \"I have attached a site inspection report and an architectural floor plan. The floor plan labels are in Chinese. Identify every room that has a critical defect in the report, then find the matching room on the floor plan and give me its number. List only the critical rooms and their numbers — nothing else.\"",
   2: "Extract only room IDs from notes, remove duplicates, then sort ascending.",
 };
 
@@ -37,7 +37,7 @@ function resetState() {
   state.score = 0;
   state.solved = { 1: false, 2: false };
   state.hintsUsed = { 1: false, 2: false };
-  state.subtasks = { 1: { a: false, b: false }, 2: { a: false, b: false } };
+  state.subtasks = { 1: { a: true, b: true }, 2: { a: false, b: false } };
   state.updatedAt = Date.now();
 }
 
@@ -55,7 +55,7 @@ function loadProgress() {
     state.solved = { 1: !!s.solved?.[1], 2: !!s.solved?.[2] };
     state.hintsUsed = { 1: !!s.hintsUsed?.[1], 2: !!s.hintsUsed?.[2] };
     state.subtasks = {
-      1: { a: !!s.subtasks?.[1]?.a, b: !!s.subtasks?.[1]?.b },
+      1: { a: true, b: true },
       2: { a: !!s.subtasks?.[2]?.a, b: !!s.subtasks?.[2]?.b },
     };
     state.updatedAt = s.updatedAt;
@@ -72,10 +72,6 @@ function updateStatsUI() {
   if (state.solved[1]) {
     l2Nav.classList.remove("locked");
     l2Nav.querySelector(".nav-icon").textContent = "2";
-    document.getElementById("workflow1").classList.remove("hidden");
-  }
-  if (state.solved[2]) {
-    document.getElementById("workflow2").classList.remove("hidden");
   }
 }
 
@@ -151,7 +147,6 @@ function unlockLevel(level) {
     state.score += 10;
     state.solved[level] = true;
   }
-  document.getElementById(`workflow${level}`).classList.remove("hidden");
   if (level === 1) {
     const nav = document.querySelector('.nav-item[data-target="level-2"]');
     nav.classList.remove("locked");
@@ -167,7 +162,7 @@ function useHint(level) {
   el.classList.remove("hidden");
   if (!state.hintsUsed[level] && !state.solved[level]) {
     state.hintsUsed[level] = true;
-    state.score = Math.max(0, state.score - 3);
+    state.score -= 3;
     updateStatsUI();
     saveProgress();
   }
@@ -203,8 +198,9 @@ function submitLevel(level) {
   if (validateFinal(level, answer)) {
     unlockLevel(level);
     setFeedback(level, true,
-      level === 1 ? "Correct — Task 1 unlocked!" : "Correct — Task 2 unlocked!");
-    if (level === 1) showSection("level-2");
+      level === 1 ? "Correct — Task 2 unlocked!" : "Correct — Task 3 unlocked!");
+    const nextBtn = document.getElementById(`nextTask${level}`);
+    if (nextBtn) nextBtn.classList.remove("hidden");
   } else {
     setFeedback(level, false, "Not correct. Recheck fragments and format.");
   }
@@ -267,6 +263,11 @@ function attachEvents() {
     btn.addEventListener("click", () => useHint(Number(btn.dataset.level)));
   });
 
+  // Next-task buttons
+  document.querySelectorAll(".btn-next").forEach((btn) => {
+    btn.addEventListener("click", () => showSection(btn.dataset.next));
+  });
+
   // Python runners
   document.querySelectorAll("[data-run-py]").forEach((btn) => {
     btn.addEventListener("click", () => runPython(btn.dataset.runPy, btn.dataset.output));
@@ -294,25 +295,31 @@ function attachEvents() {
     });
   }
 
-  // Reset
+  // Reset (requires admin code)
   document.getElementById("resetProgressBtn").addEventListener("click", () => {
+    const code = prompt("Enter admin code to reset progress:");
+    if (code !== "symadmin") return;
+
     resetState();
     localStorage.removeItem(STORAGE_KEY);
 
     [1, 2].forEach((l) => {
       ["a", "b"].forEach((k) => {
         setSubtaskFeedback(l, k, false, "");
-        document.getElementById(`fragment${l}${k}`).classList.add("hidden");
+        const frag = document.getElementById(`fragment${l}${k}`);
+        if (frag) frag.classList.add("hidden");
       });
       document.getElementById(`hint${l}`).classList.add("hidden");
       const fb = document.getElementById(`feedback${l}`);
       fb.classList.remove("ok", "bad");
       fb.textContent = "";
-      document.getElementById(`workflow${l}`).classList.add("hidden");
       document.getElementById(`answer${l}`).value = "";
+      const nextBtn = document.getElementById(`nextTask${l}`);
+      if (nextBtn) nextBtn.classList.add("hidden");
     });
     ["l1Sub1", "l1Sub2", "l2Sub1", "l2Sub2"].forEach((id) => {
-      document.getElementById(id).value = "";
+      const el = document.getElementById(id);
+      if (el) el.value = "";
     });
 
     const l2Nav = document.querySelector('.nav-item[data-target="level-2"]');
