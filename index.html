@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -9,19 +10,15 @@
   <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js" defer></script>
 </head>
 <body>
-
 <!-- ─── mobile hamburger ─── -->
 <button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation">☰</button>
-
 <div class="shell">
-
   <!-- ═══════════ LEFT SIDEBAR ═══════════ -->
   <aside id="sidebar" class="sidebar">
     <div class="brand">
       <strong>Symetri</strong> BIM Summit
       <span class="brand-sub">AI Workshop 2026</span>
     </div>
-
     <nav class="nav">
       <button class="nav-item active" data-target="start">
         <span class="nav-icon">—</span> Start
@@ -30,24 +27,20 @@
         <span class="nav-icon">1</span> Site Inspection
       </button>
       <button class="nav-item locked" data-target="level-2">
-        <span class="nav-icon nav-locked-icon">2</span> Issue Coordination
+        <span class="nav-icon nav-locked-icon">2</span> Inflated Invoice
       </button>
       <button class="nav-item locked" data-target="level-3">
         <span class="nav-icon nav-locked-icon">3</span> Coming Soon
       </button>
     </nav>
-
     <div class="sidebar-score">
       <div class="score-row"><span>Progress</span><strong id="progressText">0 / 2</strong></div>
       <div class="score-row"><span>Score</span><strong id="scoreText">0</strong></div>
     </div>
-
     <button id="resetProgressBtn" class="btn btn-ghost btn-sm">Reset progress</button>
   </aside>
-
   <!-- ═══════════ CENTER CONTENT ═══════════ -->
   <main class="center">
-
     <!-- ── START ── -->
     <section id="start" class="view">
       <div class="card welcome-card">
@@ -62,7 +55,6 @@
           to be solved faster and smarter with AI. Your job is not just to find the
           answer, but to figure out <strong>how to ask the right question</strong>.
         </p>
-
         <div class="welcome-section">
           <h3>How it works</h3>
           <p>
@@ -75,7 +67,6 @@
             <li>Progress &amp; score are cached in your browser</li>
           </ul>
         </div>
-
         <div class="welcome-section">
           <h3>Your tools</h3>
           <p>
@@ -83,7 +74,6 @@
             Use your phone, the shared screen, or just talk it through together.
           </p>
         </div>
-
         <div class="welcome-section">
           <h3>The spirit of this challenge</h3>
           <dl class="spirit-list">
@@ -105,27 +95,32 @@
             </div>
           </dl>
         </div>
-
         <button id="startBtn" class="btn btn-primary btn-start">Start challenge</button>
       </div>
     </section>
-
     <!-- ── TASK 1 ── -->
-    <section id="level-1" class="view hidden" aria-live="polite">
+    <section id="level-1" class="view hidden" aria-live="polite" data-time-without-ai="8-15 min." data-time-with-ai="2-6 min.">
       <div class="card">
         <div class="task-head">
-          <h2>Task 1 · The Damaged Building</h2>
-          <span class="pill">+10 pts</span>
+          <div class="task-head-copy">
+            <h2>Task 1 · The Damaged Building</h2>
+          </div>
+          <div class="task-head-side">
+            <div class="task-estimate" hidden></div>
+            <span class="pill">+10 pts</span>
+          </div>
         </div>
-
-        <p class="scenario">
-          You have received a confidential inspection report and an architectural floor plan 
-          from an ongoing hotel renovation project somewhere in the world. 
-           Study both documents carefully. Find the hidden unlock code.
-        </p>
-
-        <!-- Document & floorplan -->
-        <div class="doc-section">
+        <div class="task-intro">
+          <p class="scenario">
+            You have received a confidential inspection report and an architectural floor plan
+            from an ongoing hotel renovation project somewhere in the world. Study both documents
+            carefully. Find the hidden unlock code.
+          </p>
+          <p class="task-reminder"><strong>Remember:</strong> Try to divide the tasks across the group.</p>
+        </div>
+        <div class="task-section">
+          <p class="section-kicker">Source 1</p>
+          <h3>Inspection report</h3>
           <div class="doc-actions">
             <a href="assets/HPR-Report.docx" target="_blank" class="btn btn-sm">Download report (.docx)</a>
           </div>
@@ -140,140 +135,415 @@
             <p>In summary, the four spaces requiring urgent attention are the Small Dining Room, the Kitchen, the Salon, and the Main Entrance. The project team is requested to treat these as the highest priority for the period leading up to the next inspection visit, scheduled for 2&ndash;6 December 2024. All other areas are progressing within acceptable tolerances and do not require escalation at this stage.</p>
           </div>
         </div>
-
-        <div class="doc-section">
-          <h3>Floor Plan</h3>
+        <div class="task-section">
+          <p class="section-kicker">Source 2</p>
+          <h3>Floor plan</h3>
           <div class="img-frame img-frame-thumb" id="floorplanThumb">
             <img src="assets/chinese-floorplan.png" alt="Hotel renovation floor plan" loading="lazy" />
             <span class="img-expand-label">Click to enlarge</span>
           </div>
         </div>
-
         <!-- Lightbox -->
         <div id="lightbox" class="lightbox hidden" role="dialog" aria-label="Enlarged floor plan">
           <button class="lightbox-close" id="lightboxClose" aria-label="Close">&times;</button>
           <img src="assets/chinese-floorplan.png" alt="Hotel renovation floor plan – enlarged" />
         </div>
-
-        <label for="answer1">Enter the 6-digit unlock code</label>
-        <div class="row">
-          <input id="answer1" type="text" placeholder="6-digit code" maxlength="6" autocomplete="off" />
-          <button class="btn btn-primary" data-submit="1">Unlock →</button>
+        <div class="task-section">
+          <p class="section-kicker">Unlock</p>
+          <h3>Enter the 6-digit code</h3>
+          <label for="answer1">Final answer</label>
+          <div class="row">
+            <input id="answer1" type="text" placeholder="6-digit code" maxlength="6" autocomplete="off" />
+            <button class="btn btn-primary" data-submit="1">Unlock →</button>
+          </div>
+          <div class="actions">
+            <button class="btn btn-sm btn-hint hint-btn" data-level="1">Hint (−3 pts)</button>
+          </div>
+          <p id="hint1" class="hint hidden"></p>
+          <p id="feedback1" class="feedback"></p>
+          <button id="nextTask1" class="btn btn-primary btn-next hidden" data-next="level-2">Go to next task →</button>
         </div>
-
-        <div class="actions">
-          <button class="btn btn-ghost btn-sm hint-btn" data-level="1">Hint (−3 pts)</button>
-        </div>
-        <p id="hint1" class="hint hidden"></p>
-        <p id="feedback1" class="feedback"></p>
-        <button id="nextTask1" class="btn btn-primary btn-next hidden" data-next="level-2">Go to next task →</button>
       </div>
     </section>
-
     <!-- ── TASK 2 ── -->
-    <section id="level-2" class="view hidden" aria-live="polite">
+    <section id="level-2" class="view hidden" aria-live="polite" data-time-without-ai="10-20 min." data-time-with-ai="5-7 min." data-gate-answer="15">
       <div class="card">
         <div class="task-head">
-          <h2>Task 2 · Issue Coordination</h2>
-          <span class="pill">+10 pts</span>
-        </div>
-
-        <p class="scenario">Coordination notes from various sources:</p>
-        <pre class="code-viewer"><code>1  "Leak near RM-305 ceiling"
-2  "Clash at room 201 duct route"
-3  "Follow-up: room201 access panel"
-4  "Sensor offline in RM 402"
-5  "Ignore temp trailer log"</code></pre>
-
-        <p class="scenario">
-          Identify affected rooms and build format <code>IMPACT-xxx-yyy-zzz</code> (ascending).
-        </p>
-
-        <!-- subtask A -->
-        <div class="subtask">
-          <label for="l2Sub1">Subtask A – List unique affected rooms (ascending)</label>
-          <div class="row">
-            <input id="l2Sub1" type="text" placeholder="201, 305, 402" autocomplete="off" />
-            <button class="btn" data-check-subtask="2a">Check</button>
+          <div class="task-head-copy">
+            <h2>Task 2 · The Inflated Invoice</h2>
           </div>
-          <p id="subFeedback2a" class="sub-feedback"></p>
-        </div>
-
-        <!-- subtask B -->
-        <div class="subtask">
-          <label for="l2Sub2">Subtask B – How many unique rooms?</label>
-          <div class="row">
-            <input id="l2Sub2" type="text" placeholder="Count" autocomplete="off" />
-            <button class="btn" data-check-subtask="2b">Check</button>
+          <div class="task-head-side">
+            <div class="task-estimate" hidden></div>
+            <span class="pill">+10 pts</span>
           </div>
-          <p id="subFeedback2b" class="sub-feedback"></p>
         </div>
-
-        <div class="fragments" id="fragments2">
-          <span id="fragment2a" class="fragment hidden">IMPACT</span>
-          <span id="fragment2b" class="fragment hidden">201-305-402</span>
+        <div class="task-intro">
+          <p class="scenario">
+            The rest of this task remains locked until the gate riddle is solved.
+            Choose the correct room number to reveal the source material and the exercise.
+          </p>
+          <p class="task-reminder"><strong>Remember:</strong> Try to divide the tasks across the group.</p>
         </div>
-        <p id="codeGuide2" class="guide">Solve subtasks to reveal all code fragments.</p>
-
-        <label for="answer2">Final unlock code</label>
-        <div class="row">
-          <input id="answer2" type="text" placeholder="IMPACT-201-305-402" autocomplete="off" />
-          <button class="btn btn-primary" data-submit="2">Unlock →</button>
+        <div class="task-section gate-panel">
+          <p class="section-kicker">Gate Challenge</p>
+          <h3>🔐 THE GATE RIDDLE</h3>
+          <p class="gate-tagline">— Solve the riddle. Choose your room. Open the gate. —</p>
+          <div class="gate-riddle">
+            <p>Before this keep was raised in stone, before these walls saw light,<br />I slumbered deep beneath the earth, through many a forgotten night.</p>
+            <p>No mason laid my bricks in place, no lord decreed my form —<br />The builders found me in the ground, and left me to conform.</p>
+            <p>I am no hall where feasts are held, no kitchen, spa, or door,<br />No numbered chamber greets its guests upon my silent floor.</p>
+            <p>Yet on this plan my mark is set, where ancient kingdoms fell —<br />Find my number on the map... I am the ancient well.</p>
+          </div>
+          <p class="gate-question">Which room number am I?</p>
+          <div class="room-grid" role="group" aria-label="Choose the correct room number">
+            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="1" aria-label="Room 1">1</button>
+            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="2" aria-label="Room 2">2</button>
+            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="3" aria-label="Room 3">3</button>
+            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="4" aria-label="Room 4">4</button>
+            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="5" aria-label="Room 5">5</button>
+            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="6" aria-label="Room 6">6</button>
+            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="7" aria-label="Room 7">7</button>
+            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="8" aria-label="Room 8">8</button>
+            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="9" aria-label="Room 9">9</button>
+            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="10" aria-label="Room 10">10</button>
+            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="11" aria-label="Room 11">11</button>
+            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="12" aria-label="Room 12">12</button>
+            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="13" aria-label="Room 13">13</button>
+            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="14" aria-label="Room 14">14</button>
+            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="15" aria-label="Room 15">15</button>
+          </div>
+          <p id="gateFeedback2" class="feedback gate-feedback"></p>
         </div>
-
-        <div class="actions">
-          <button class="btn btn-ghost btn-sm hint-btn" data-level="2">Hint (−3 pts)</button>
+        <div id="task2UnlockedContent" class="hidden">
+          <div class="task-section">
+            <p class="section-kicker">Unlocked Brief</p>
+            <h3>The inflated quote</h3>
+            <p class="scenario">
+              Your team's work in Task 1 has been sent up the chain. The four damaged spaces you
+              identified — the Small Dining Room, the Kitchen, the Salon, and the Main Entrance —
+              have been officially flagged for repair.
+            </p>
+            <p class="scenario">
+              The main contractor has now sent over a renovation quote: a list of every repair job,
+              how many square metres it covers, and what it costs.
+            </p>
+            <p class="scenario">Your project manager reviewed it over the weekend. His message arrived at 06:42 on Monday:</p>
+            <article class="mail-card" aria-label="Project manager email">
+              <div class="mail-meta">
+                <div><strong>From:</strong> Project Manager</div>
+                <div><strong>Sent:</strong> Monday, 06:42</div>
+                <div><strong>Subject:</strong> Renovation quote review needed</div>
+              </div>
+              <div class="mail-body">
+                <p>
+                  "These numbers don't add up. The inspector estimated around CNY 240,000 for all
+                  the repairs. The contractor is now billing us CNY 308,000 — that's CNY 68,000
+                  more. I need someone to go through this line by line and find out exactly what's wrong."
+                </p>
+              </div>
+            </article>
+            <p class="scenario">
+              You've been handed the raw data. Your mission: find the overcharges, prove them, and
+              calculate what the repairs should actually cost.
+            </p>
+          </div>
+          <div class="task-section">
+            <p class="section-kicker">Source</p>
+            <h3>Renovation quote</h3>
+            <div class="doc-actions">
+              <a href="assets/renovation_quote.xlsx" target="_blank" class="btn btn-sm">Download quote (.xlsx)</a>
+            </div>
+            <div class="data-viewer-card">
+              <div class="data-viewer-head">
+                <h4>List viewer</h4>
+                <p>All 15 job rows from the contractor's quote.</p>
+              </div>
+              <div class="table-viewer" tabindex="0">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Room</th>
+                      <th>Room Name</th>
+                      <th>Chinese</th>
+                      <th>Work Type</th>
+                      <th>Job Description</th>
+                      <th>Quoted Qty</th>
+                      <th>Unit</th>
+                      <th>Unit Price</th>
+                      <th>Contractor Total</th>
+                      <th>Approved Qty</th>
+                      <th>Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>5</td>
+                      <td>Small Dining Room</td>
+                      <td>小餐厅</td>
+                      <td>Floor repair</td>
+                      <td>Ceramic floor tile replacement</td>
+                      <td>80</td>
+                      <td>m²</td>
+                      <td>220</td>
+                      <td>17,600</td>
+                      <td>40</td>
+                      <td>Approved qty: 40</td>
+                    </tr>
+                    <tr>
+                      <td>5</td>
+                      <td>Small Dining Room</td>
+                      <td>小餐厅</td>
+                      <td>Wall finish</td>
+                      <td>Interior wall paint</td>
+                      <td>40</td>
+                      <td>m²</td>
+                      <td>85</td>
+                      <td>3,400</td>
+                      <td>40</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td>5</td>
+                      <td>Small Dining Room</td>
+                      <td>小餐厅</td>
+                      <td>Drainage</td>
+                      <td>Drainage channel repair (lump sum)</td>
+                      <td>1</td>
+                      <td>item</td>
+                      <td>18,000</td>
+                      <td>18,000</td>
+                      <td>1</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td>8</td>
+                      <td>Kitchen</td>
+                      <td>厨房</td>
+                      <td>Waterproofing</td>
+                      <td>Polyurethane waterproofing membrane</td>
+                      <td>96</td>
+                      <td>m²</td>
+                      <td>450</td>
+                      <td>43,200</td>
+                      <td>48</td>
+                      <td>Approved qty: 48</td>
+                    </tr>
+                    <tr>
+                      <td>8</td>
+                      <td>Kitchen</td>
+                      <td>厨房</td>
+                      <td>Floor repair</td>
+                      <td>Cement floor screed</td>
+                      <td>48</td>
+                      <td>m²</td>
+                      <td>280</td>
+                      <td>13,440</td>
+                      <td>48</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td>8</td>
+                      <td>Kitchen</td>
+                      <td>厨房</td>
+                      <td>Wall repair</td>
+                      <td>Cement render to lower wall zones</td>
+                      <td>38</td>
+                      <td>m²</td>
+                      <td>320</td>
+                      <td>12,160</td>
+                      <td>24</td>
+                      <td>Approved qty: 24</td>
+                    </tr>
+                    <tr>
+                      <td>8</td>
+                      <td>Kitchen</td>
+                      <td>厨房</td>
+                      <td>MEP works</td>
+                      <td>Gas pipe rerouting (lump sum)</td>
+                      <td>1</td>
+                      <td>item</td>
+                      <td>23,500</td>
+                      <td>23,500</td>
+                      <td>1</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td>11</td>
+                      <td>Salon</td>
+                      <td>理发室</td>
+                      <td>Electrical</td>
+                      <td>First-fix electrical rewire (lump sum)</td>
+                      <td>1</td>
+                      <td>item</td>
+                      <td>64,000</td>
+                      <td>64,000</td>
+                      <td>1</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td>11</td>
+                      <td>Salon</td>
+                      <td>理发室</td>
+                      <td>Cable</td>
+                      <td>Cable tray replacement</td>
+                      <td>44</td>
+                      <td>m²</td>
+                      <td>380</td>
+                      <td>16,720</td>
+                      <td>22</td>
+                      <td>Approved qty: 22</td>
+                    </tr>
+                    <tr>
+                      <td>11</td>
+                      <td>Salon</td>
+                      <td>理发室</td>
+                      <td>Ceiling repair</td>
+                      <td>Plasterboard ceiling void closure</td>
+                      <td>22</td>
+                      <td>m²</td>
+                      <td>190</td>
+                      <td>4,180</td>
+                      <td>22</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td>11</td>
+                      <td>Salon</td>
+                      <td>理发室</td>
+                      <td>Compliance</td>
+                      <td>Re-inspection fee (lump sum)</td>
+                      <td>1</td>
+                      <td>item</td>
+                      <td>5,000</td>
+                      <td>5,000</td>
+                      <td>1</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td>14</td>
+                      <td>Main Entrance</td>
+                      <td>入口</td>
+                      <td>Structural</td>
+                      <td>Epoxy crack injection (lump sum)</td>
+                      <td>1</td>
+                      <td>item</td>
+                      <td>45,000</td>
+                      <td>45,000</td>
+                      <td>1</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td>14</td>
+                      <td>Main Entrance</td>
+                      <td>入口</td>
+                      <td>Concrete repair</td>
+                      <td>Concrete beam soffit render</td>
+                      <td>28</td>
+                      <td>m²</td>
+                      <td>780</td>
+                      <td>21,840</td>
+                      <td>12</td>
+                      <td>Approved qty: 12</td>
+                    </tr>
+                    <tr>
+                      <td>14</td>
+                      <td>Main Entrance</td>
+                      <td>入口</td>
+                      <td>Temp. works</td>
+                      <td>Temporary propping removal (lump sum)</td>
+                      <td>1</td>
+                      <td>item</td>
+                      <td>8,500</td>
+                      <td>8,500</td>
+                      <td>1</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td>14</td>
+                      <td>Main Entrance</td>
+                      <td>入口</td>
+                      <td>Additional</td>
+                      <td>Structural vibration monitoring system</td>
+                      <td>1</td>
+                      <td>item</td>
+                      <td>12,000</td>
+                      <td>12,000</td>
+                      <td>0</td>
+                      <td>NOT in approved scope</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="task-section">
+            <p class="section-kicker">Checks</p>
+            <h3>Investigate the quote</h3>
+            <p class="section-note">Work through the quote and confirm each finding.</p>
+            <div class="task-steps">
+              <div class="task-step subtask">
+                <label for="l2Sub1">How many jobs are listed in the quote in total?</label>
+                <div class="row">
+                  <input id="l2Sub1" type="text" placeholder="Enter total number of jobs" autocomplete="off" />
+                  <button class="btn" data-check-subtask="2a">Check</button>
+                </div>
+                <p id="subFeedback2a" class="sub-feedback"></p>
+              </div>
+              <div class="task-step subtask">
+                <label for="l2Sub2">Which room has the highest total repair cost according to the contractor?</label>
+                <input id="l2Sub2" type="hidden" />
+                <div class="choice-grid" role="group" aria-label="Choose the room with the highest total repair cost">
+                  <button type="button" class="choice-option" data-choice-subtask="2b" data-choice-value="5">Room 5</button>
+                  <button type="button" class="choice-option" data-choice-subtask="2b" data-choice-value="8">Room 8</button>
+                  <button type="button" class="choice-option" data-choice-subtask="2b" data-choice-value="11">Room 11</button>
+                  <button type="button" class="choice-option" data-choice-subtask="2b" data-choice-value="14">Room 14</button>
+                </div>
+                <p id="subFeedback2b" class="sub-feedback"></p>
+              </div>
+              <div class="task-step subtask">
+                <label for="l2Sub3">Locate any entry with an Approved_Qty of 0 and indicate the corresponding room.</label>
+                <div class="row">
+                  <input id="l2Sub3" type="text" placeholder="Enter room number" autocomplete="off" />
+                  <button class="btn" data-check-subtask="2c">Check</button>
+                </div>
+                <p id="subFeedback2c" class="sub-feedback"></p>
+              </div>
+              <div class="task-step subtask">
+                <label for="l2Sub4">Look at Quoted_Qty vs. Approved_Qty for each row. What is the biggest gap?</label>
+                <div class="row">
+                  <input id="l2Sub4" type="text" placeholder="Enter the biggest gap" autocomplete="off" />
+                  <button class="btn" data-check-subtask="2d">Check</button>
+                </div>
+                <p id="subFeedback2d" class="sub-feedback"></p>
+              </div>
+            </div>
+            <div class="actions">
+              <button class="btn btn-sm btn-hint hint-btn" data-level="2">Hint (−3 pts)</button>
+            </div>
+            <p id="hint2" class="hint hidden"></p>
+            <p id="feedback2" class="feedback"></p>
+            <button id="nextTask2" class="btn btn-primary btn-next hidden" data-next="level-3">Go to next task →</button>
+          </div>
         </div>
-        <p id="hint2" class="hint hidden"></p>
-        <p id="feedback2" class="feedback"></p>
-        <button id="nextTask2" class="btn btn-primary btn-next hidden" data-next="level-3">Go to next task →</button>
       </div>
-
-      <!-- Python sandbox -->
-      <details class="card tool-card">
-        <summary>Python Sandbox</summary>
-        <p class="tool-desc">Parse the messy notes programmatically.</p>
-        <textarea id="pyEditor2" class="py-editor" rows="8" spellcheck="false">import re
-notes = [
-    "Leak near RM-305 ceiling",
-    "Clash at room 201 duct route",
-    "Follow-up: room201 access panel",
-    "Sensor offline in RM 402",
-    "Ignore temp trailer log",
-]
-rooms = sorted(set(int(m) for n in notes for m in re.findall(r"\d{3}", n)))
-print("Affected rooms:", rooms)</textarea>
-        <button class="btn btn-sm" data-run-py="pyEditor2" data-output="pyOut2">▶ Run</button>
-        <pre id="pyOut2" class="py-output"></pre>
-      </details>
-
-      <!-- Code viewer -->
-      <details class="card tool-card">
-        <summary>Code Viewer – sample coordination script</summary>
-        <pre class="code-viewer"><code>import re, json
-
-def extract_rooms(notes):
-    """Return sorted unique room IDs from free-text notes."""
-    ids = set()
-    for note in notes:
-        ids.update(re.findall(r"\d{3}", note))
-    return sorted(ids, key=int)
-
-rooms = extract_rooms(notes)
-print(json.dumps({"impact_rooms": rooms}, indent=2))</code></pre>
-      </details>
     </section>
-
     <!-- ── TASK 3 (placeholder) ── -->
-    <section id="level-3" class="view hidden" aria-live="polite">
+    <section id="level-3" class="view hidden" aria-live="polite" data-time-without-ai="" data-time-with-ai="">
       <div class="card">
         <div class="task-head">
-          <h2>Task 3 · Coming Soon</h2>
-          <span class="pill">+10 pts</span>
+          <div class="task-head-copy">
+            <h2>Task 3 · Coming Soon</h2>
+          </div>
+          <div class="task-head-side">
+            <div class="task-estimate" hidden></div>
+            <span class="pill">+10 pts</span>
+          </div>
         </div>
-        <p class="scenario">This challenge is not yet available.</p>
+        <div class="task-intro">
+          <p class="scenario">This challenge is not yet available.</p>
+          <p class="task-reminder"><strong>Remember:</strong> Try to divide the tasks across the group.</p>
+        </div>
       </div>
-
       <!-- Python sandbox -->
       <details class="card tool-card">
         <summary>Python Sandbox</summary>
@@ -285,21 +555,17 @@ print(f"Most severe damage: floor {worst}")</textarea>
         <pre id="pyOut1" class="py-output"></pre>
       </details>
     </section>
-
   </main>
-
   <!-- ═══════════ RIGHT PANEL — FACT BOXES ═══════════ -->
   <aside id="rightPanel" class="right-panel">
-
     <!-- shown on Start -->
-    <div class="fact" data-for="start">
-      <h3>Did you know?</h3>
+    <div class="fact fact-ai" data-for="start">
+      <h3><span class="ai-sparkle">✦</span> Did you know?</h3>
       <p>
         AI assistants like <strong>GitHub Copilot</strong> and <strong>Claude</strong>
         can analyse drawings, extract tables, and generate structured BIM data in seconds.
       </p>
     </div>
-
     <!-- shown on Task 1 -->
     <div class="fact fact-ai" data-for="level-1">
       <h3><span class="ai-sparkle">✦</span> Did you know?</h3>
@@ -308,6 +574,10 @@ print(f"Most severe damage: floor {worst}")</textarea>
         issues, and locating them on a drawing — is exactly what an AI agent can do
         automatically.
       </p>
+      <div class="fact-media">
+        <img src="assets/cowork.jpeg" alt="AI coworking visual" loading="lazy" />
+        
+      </div>
       <p>
         <strong>Claude Coworker</strong> can connect directly to your Google Drive or
         Word documents and read them without any copy-pasting. With an
@@ -328,25 +598,28 @@ print(f"Most severe damage: floor {worst}")</textarea>
         <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">modelcontextprotocol.io</a>
       </div>
     </div>
-
     <!-- shown on Task 2 -->
-    <div class="fact" data-for="level-2">
-      <h3>AI Fact</h3>
-      <p><strong>AI can reduce coordination noise.</strong></p>
+    <div class="fact fact-ai" data-for="level-2">
+      <h3><span class="ai-sparkle">✦</span> AI Fact</h3>
+      <p><strong>AI agents don't just answer questions — they find the ones you forgot to ask.</strong></p>
       <p>
-        Ask AI to cluster similar issue descriptions and identify common locations.
-        Teams can then focus meetings on high-impact rooms first.
+        Feed an AI a spreadsheet and it will cross-reference every row, flag quantities that don't match,
+        catch line items no one approved, and write the Python to prove it — in seconds.
+        The same technique powers fraud detection in banking and billing audits in healthcare.
+        In construction, AI-assisted cost reviews regularly uncover overcharges hiding in plain sight.
+        Most are never caught by hand.
       </p>
       <hr />
-      <h4>GitHub Copilot in VS Code</h4>
+      <h4>Good prompt pattern</h4>
       <p>
-        Copilot can autocomplete regex patterns and data parsing scripts in seconds — try it live.
+        <em>"Here is a renovation quote as a CSV. Compare <code>Quoted_Qty</code> to <code>Approved_Qty</code> for each row.
+        Flag any row where the contractor's quantity is higher, calculate the overcharge per line,
+        and give me the total overcharge as a percentage. Write it in Python."</em>
       </p>
+      <hr />
     </div>
-
   </aside>
 </div>
-
 <script src="app.js"></script>
 </body>
 </html>
