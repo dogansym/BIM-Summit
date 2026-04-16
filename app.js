@@ -7,9 +7,14 @@ const STORAGE_TTL_MS = 1000 * 60 * 60 * 24 * 14;
 
 const state = {
   score: 0,
-  solved: { 1: false, 2: false },
-  hintsUsed: { 1: false, 2: false },
-  subtasks: { 1: { a: true, b: true }, 2: { a: false, b: false, c: false, d: false } },
+  solved: { 1: false, 2: false, 3: false },
+  hintsUsed: { 1: false, 2: false, 3: false },
+  subtasks: {
+    1: { a: true, b: true },
+    2: { a: false, b: false, c: false, d: false },
+    3: { a: false, b: false, c: false, d: false },
+  },
+  audits: { 3: false },
   gates: { 2: false },
   updatedAt: 0,
 };
@@ -17,6 +22,14 @@ const state = {
 const hints = {
   1: "Try to find the critical rooms in the report",
   2: "Ask AI to answer all questions at once by uploading the excel sheet or copy/paste",
+  3: "I am building a Cost Agent. I have provided the Contractor's Quotes and the Approved Budget for four rooms. Write a compact Python script that stores these two datasets, calculates the overcharge (Contractor - Approved) for each room, and allows a user to input a room number to see the specific overcharge for that room. If the room is not found, print 'No overcharge detected'.",
+};
+
+const TASK3_ROOM_OVERCHARGES = {
+  5: 8800,
+  8: 26080,
+  11: 8360,
+  14: 24480,
 };
 
 /* ─── helpers ─── */
@@ -36,9 +49,14 @@ function saveProgress() {
 
 function resetState() {
   state.score = 0;
-  state.solved = { 1: false, 2: false };
-  state.hintsUsed = { 1: false, 2: false };
-  state.subtasks = { 1: { a: true, b: true }, 2: { a: false, b: false, c: false, d: false } };
+  state.solved = { 1: false, 2: false, 3: false };
+  state.hintsUsed = { 1: false, 2: false, 3: false };
+  state.subtasks = {
+    1: { a: true, b: true },
+    2: { a: false, b: false, c: false, d: false },
+    3: { a: false, b: false, c: false, d: false },
+  };
+  state.audits = { 3: false };
   state.gates = { 2: false };
   state.updatedAt = Date.now();
 }
@@ -54,9 +72,18 @@ function loadProgress() {
       return;
     }
     const hasGateState = !!s.gates && typeof s.gates === "object";
+    const hasAuditState = !!s.audits && typeof s.audits === "object";
     state.score = Number(s.score) || 0;
-    state.solved = { 1: !!s.solved?.[1], 2: hasGateState ? !!s.solved?.[2] : false };
-    state.hintsUsed = { 1: !!s.hintsUsed?.[1], 2: hasGateState ? !!s.hintsUsed?.[2] : false };
+    state.solved = {
+      1: !!s.solved?.[1],
+      2: hasGateState ? !!s.solved?.[2] : false,
+      3: hasAuditState ? !!s.solved?.[3] : false,
+    };
+    state.hintsUsed = {
+      1: !!s.hintsUsed?.[1],
+      2: hasGateState ? !!s.hintsUsed?.[2] : false,
+      3: !!s.hintsUsed?.[3],
+    };
     state.subtasks = {
       1: { a: true, b: true },
       2: hasGateState
@@ -67,16 +94,26 @@ function loadProgress() {
             d: !!s.subtasks?.[2]?.d,
           }
         : { a: false, b: false, c: false, d: false },
+      3: {
+        a: !!s.subtasks?.[3]?.a,
+        b: !!s.subtasks?.[3]?.b,
+        c: !!s.subtasks?.[3]?.c,
+        d: !!s.subtasks?.[3]?.d,
+      },
     };
+    state.audits = { 3: hasAuditState ? !!s.audits?.[3] : false };
     state.gates = { 2: !!s.gates?.[2] };
+    state.score =
+      (Number(state.solved[1]) + Number(state.solved[2]) + Number(state.solved[3])) * 10
+      - (Number(state.hintsUsed[1]) + Number(state.hintsUsed[2]) + Number(state.hintsUsed[3])) * 3;
     state.updatedAt = s.updatedAt;
   } catch { resetState(); }
 }
 
 /* ─── UI updates ─── */
 function updateStatsUI() {
-  const solved = Number(state.solved[1]) + Number(state.solved[2]);
-  document.getElementById("progressText").textContent = `${solved} / 2`;
+  const solved = Number(state.solved[1]) + Number(state.solved[2]) + Number(state.solved[3]);
+  document.getElementById("progressText").textContent = `${solved} / 3`;
   document.getElementById("scoreText").textContent = String(state.score);
 
   const l2Nav = document.querySelector('.nav-item[data-target="level-2"]');
@@ -100,19 +137,24 @@ function updateSubtaskUI(level, key) {
 
   const guide = document.getElementById(`codeGuide${level}`);
   if (!guide) return;
-  const done = state.subtasks[level].a && state.subtasks[level].b;
+  const done = Object.values(state.subtasks[level]).every(Boolean);
   guide.textContent = done
     ? level === 1
       ? "Fragments revealed: combine them into the 6-digit code."
-      : "Fragments complete — build code: IMPACT-201-305-402"
-    : "Solve the checks to reveal all code fragments.";
+      : level === 2
+        ? "Quote audit complete — Task 2 is ready."
+        : "Protocol Stack online — the Cost Agent is live."
+    : level === 3
+      ? "Unlock Box 1-3, then compile your agent to bring the console online."
+      : "Solve the checks to reveal all code fragments.";
 }
 
 function renderSubtaskState() {
-  Object.entries({ 1: ["a", "b"], 2: ["a", "b", "c", "d"] }).forEach(([level, keys]) => {
+  Object.entries({ 1: ["a", "b"], 2: ["a", "b", "c", "d"], 3: ["a", "b", "c", "d"] }).forEach(([level, keys]) => {
     keys.forEach((key) => updateSubtaskUI(Number(level), key));
   });
   renderTask2CheckState();
+  renderTask3CheckState();
 }
 
 function setSubtaskFeedback(level, key, ok, msg) {
@@ -127,6 +169,14 @@ function getTask2SuccessMessage(key) {
   if (key === "b") return "Room 8 – Kitchen (92,300 CNY)";
   if (key === "c") return "Room: 14 — Main Entrance (入口)";
   if (key === "d") return "Kitchen – Waterproofing: gap 48";
+  return "Correct";
+}
+
+function getTask3SuccessMessage(key) {
+  if (key === "a") return "Correct — the path forms the letter N.";
+  if (key === "b") return "Correct — 1989 in binary is 11111000101.";
+  if (key === "c") return "Correct — the Main Entrance, Room 14, is the target.";
+  if (key === "d") return "Correct — your agent compiles and the live prompt console is unlocked.";
   return "Correct";
 }
 
@@ -255,6 +305,93 @@ function renderTask2CheckState() {
   renderTask2CompletionState();
 }
 
+function renderTask3CheckState() {
+  ["a", "b", "c", "d"].forEach((key) => {
+    if (state.subtasks[3][key]) {
+      setSubtaskFeedback(3, key, true, getTask3SuccessMessage(key));
+    }
+  });
+
+  const prerequisitesReady = state.subtasks[3].a && state.subtasks[3].b && state.subtasks[3].c;
+  const compileBtn = document.getElementById("compileAgent3");
+  if (compileBtn) compileBtn.disabled = !prerequisitesReady;
+
+  const agentStatus = document.getElementById("agentStatus3");
+  if (agentStatus) {
+    agentStatus.classList.toggle("is-ready", state.subtasks[3].d);
+    agentStatus.textContent = state.subtasks[3].d
+      ? "Green light: the Cost Agent compiled successfully. Test it below with room numbers."
+      : prerequisitesReady
+        ? "All datasets are unlocked. Compile the Python agent to activate the prompt console."
+        : "Unlock Box 1-3 first, then compile the agent to bring the prompt console online.";
+  }
+
+  const agentConsole = document.getElementById("agentConsole3");
+  if (agentConsole) agentConsole.classList.toggle("hidden", !state.subtasks[3].d);
+
+  renderTask3AuditInputs();
+  updateTask3StackDiagram();
+  renderTask3CompletionState();
+}
+
+function renderTask3AuditInputs() {
+  Object.entries(TASK3_ROOM_OVERCHARGES).forEach(([room, amount]) => {
+    const input = document.getElementById(`l3Room${room}`);
+    if (!input) return;
+    if (state.audits[3]) input.value = String(amount);
+  });
+}
+
+function updateTask3StackDiagram() {
+  const prerequisitesReady = state.subtasks[3].a && state.subtasks[3].b && state.subtasks[3].c;
+  const nodeMap = {
+    "3a": state.subtasks[3].a,
+    "3b": state.subtasks[3].b,
+    "3c": state.subtasks[3].c,
+    "3run": prerequisitesReady,
+    "3d": state.subtasks[3].d,
+  };
+
+  Object.entries(nodeMap).forEach(([nodeId, unlocked]) => {
+    const node = document.querySelector(`[data-stack-node="${nodeId}"]`);
+    if (!node) return;
+    node.classList.toggle("is-unlocked", unlocked && nodeId !== "3d");
+    node.classList.toggle("is-ready", nodeId === "3run" && unlocked && !state.subtasks[3].d);
+    node.classList.toggle("is-complete", nodeId === "3d" && unlocked);
+  });
+
+  const labels = {
+    "3a": state.subtasks[3].a ? "Unlocked" : "Locked",
+    "3b": state.subtasks[3].b ? "Unlocked" : "Locked",
+    "3c": state.subtasks[3].c ? "Unlocked" : "Locked",
+    "3run": state.subtasks[3].a && state.subtasks[3].b && state.subtasks[3].c
+      ? state.subtasks[3].d ? "Executed" : "Ready"
+      : "Waiting",
+    "3d": state.subtasks[3].d ? "Online" : "Locked",
+  };
+
+  Object.entries(labels).forEach(([nodeId, label]) => {
+    const stateEl = document.querySelector(`[data-stack-state="${nodeId}"]`);
+    if (stateEl) stateEl.textContent = label;
+  });
+
+  const laneStates = {
+    top: state.subtasks[3].a || state.subtasks[3].b || state.subtasks[3].c,
+    left: state.subtasks[3].a,
+    center: state.subtasks[3].b,
+    right: state.subtasks[3].c,
+    bottom: prerequisitesReady,
+    output: state.subtasks[3].d,
+  };
+
+  Object.entries(laneStates).forEach(([laneId, active]) => {
+    const lane = document.querySelector(`[data-stack-lane="${laneId}"]`);
+    if (!lane) return;
+    lane.classList.toggle("is-active", active);
+    lane.classList.toggle("is-ready", laneId === "bottom" && prerequisitesReady && !state.subtasks[3].d);
+  });
+}
+
 function chooseTask2Room(value) {
   const input = document.getElementById("l2Sub2");
   if (input) input.value = value;
@@ -282,6 +419,64 @@ function renderTask2CompletionState() {
   } else if (nextBtn) {
     nextBtn.classList.add("hidden");
   }
+}
+
+function renderTask3CompletionState() {
+  const allDone = ["a", "b", "c", "d"].every((key) => state.subtasks[3][key]) && state.audits[3];
+  const nextBtn = document.getElementById("nextTask3");
+
+  if (allDone && !state.solved[3]) {
+    unlockLevel(3);
+  }
+
+  if (state.solved[3]) {
+    setFeedback(3, true, "Correct — the Cost Agent is compiled and all four room overcharges are logged.");
+    if (nextBtn) nextBtn.classList.remove("hidden");
+  } else if (nextBtn) {
+    nextBtn.classList.add("hidden");
+  }
+}
+
+function checkTask3RoomAudit() {
+  if (!state.subtasks[3].d) {
+    setFeedback(3, false, "Compile the agent first, then use it to find the room overcharges.");
+    return;
+  }
+
+  const entries = Object.keys(TASK3_ROOM_OVERCHARGES).map((room) => {
+    const input = document.getElementById(`l3Room${room}`);
+    return [Number(room), input ? input.value.trim() : ""];
+  });
+
+  if (entries.some(([, value]) => !value)) {
+    setFeedback(3, false, "Enter an overcharge amount for all four rooms. Use digits only, without dots or commas.");
+    return;
+  }
+
+  if (entries.some(([, value]) => !/^\d+$/.test(value))) {
+    if (!state.solved[3]) state.audits[3] = false;
+    setFeedback(3, false, "Type the room overcharge amounts using digits only, without dots or commas.");
+    renderTask3CompletionState();
+    saveProgress();
+    return;
+  }
+
+  const incorrectRooms = entries
+    .filter(([room, value]) => Number(value) !== TASK3_ROOM_OVERCHARGES[room])
+    .map(([room]) => `Room ${room}`);
+
+  if (incorrectRooms.length) {
+    if (!state.solved[3]) state.audits[3] = false;
+    setFeedback(3, false, "Not correct yet. Re-run the agent and enter the exact overcharge for each room.");
+    renderTask3CompletionState();
+    saveProgress();
+    return;
+  }
+
+  state.audits[3] = true;
+  renderTask3AuditInputs();
+  renderTask3CompletionState();
+  saveProgress();
 }
 
 function tryGate(level, room) {
@@ -327,6 +522,14 @@ function validateSubtask(level, key, raw) {
   if (level === 2 && key === "b") return Number(v) === 8;
   if (level === 2 && key === "c") return Number(v) === 14;
   if (level === 2 && key === "d") return Number(v) === 48;
+  if (level === 3 && key === "a") {
+    return ["N", "LETTERN", "THELETTERN"].includes(v);
+  }
+  if (level === 3 && key === "b") return v === "11111000101";
+  if (level === 3 && key === "c") {
+    const rawText = String(raw || "").toUpperCase();
+    return Number(v) === 14 || rawText.includes("MAIN ENTRANCE") || rawText.includes("ROOM 14");
+  }
   return false;
 }
 
@@ -378,9 +581,14 @@ function checkSubtask(level, key) {
     setSubtaskFeedback(level, key, false, "Solve Task 1 first.");
     return;
   }
+  if (level === 3 && !state.solved[2]) {
+    setSubtaskFeedback(level, key, false, "Solve Task 2 first.");
+    return;
+  }
   const inputIds = {
     1: { a: "l1Sub1", b: "l1Sub2" },
     2: { a: "l2Sub1", b: "l2Sub2", c: "l2Sub3", d: "l2Sub4" },
+    3: { a: "l3Sub1", b: "l3Sub2", c: "l3Sub3" },
   };
   const inputId = inputIds[level]?.[key];
   if (!inputId) return;
@@ -391,18 +599,23 @@ function checkSubtask(level, key) {
       level,
       key,
       true,
-      level === 2 ? getTask2SuccessMessage(key) : "Correct — fragment unlocked.",
+      level === 2 ? getTask2SuccessMessage(key) : level === 3 ? getTask3SuccessMessage(key) : "Correct — fragment unlocked.",
     );
   } else {
     setSubtaskFeedback(
       level,
       key,
       false,
-      level === 2 ? "Not correct yet. Recheck the quote data." : "Not correct yet.",
+      level === 2
+        ? "Not correct yet. Recheck the quote data."
+        : level === 3
+          ? "Not correct yet. Recheck the protocol stack clues."
+          : "Not correct yet.",
     );
   }
   updateSubtaskUI(level, key);
   if (level === 2) renderTask2CheckState();
+  if (level === 3) renderTask3CheckState();
   saveProgress();
 }
 
@@ -436,17 +649,124 @@ function ensurePyodide() {
   return pyodideReady;
 }
 
-async function runPython(editorId, outputId) {
+function bindPythonOutput(py, outEl) {
+  py.setStdout({
+    batched: (text) => {
+      outEl.textContent += `${text}\n`;
+    },
+  });
+  if (typeof py.setStderr === "function") {
+    py.setStderr({
+      batched: (text) => {
+        outEl.textContent += `${text}\n`;
+      },
+    });
+  }
+}
+
+async function compileAgent(level, editorId, outputId) {
   const outEl = document.getElementById(outputId);
   const code = document.getElementById(editorId).value;
-  outEl.textContent = "Loading Python…";
+  const prerequisitesReady = state.subtasks[3].a && state.subtasks[3].b && state.subtasks[3].c;
+
+  if (level === 3 && !prerequisitesReady) {
+    setSubtaskFeedback(3, "d", false, "Unlock Box 1-3 before compiling the agent.");
+    return;
+  }
+
+  let py;
+  outEl.textContent = "Compiling agent…";
   try {
-    const py = await ensurePyodide();
-    py.setStdout({ batched: (t) => { outEl.textContent += t + "\n"; } });
+    py = await ensurePyodide();
+    bindPythonOutput(py, outEl);
+    py.globals.set("__agent_code__", code);
     outEl.textContent = "";
-    await py.runPythonAsync(code);
+    await py.runPythonAsync(`
+import ast
+
+tree = ast.parse(__agent_code__, "<agent>", "exec")
+compile(__agent_code__, "<agent>", "exec")
+
+has_input_call = any(
+    isinstance(node, ast.Call) and getattr(node.func, "id", "") == "input"
+    for node in ast.walk(tree)
+)
+
+if not has_input_call:
+    raise ValueError("Add an input() prompt so the user can type a room number.")
+`);
+    state.subtasks[3].d = true;
+    outEl.textContent = "Compilation successful.\nAgent console unlocked.";
+    setSubtaskFeedback(3, "d", true, getTask3SuccessMessage("d"));
+    updateSubtaskUI(3, "d");
+    renderTask3CheckState();
+    saveProgress();
+  } catch (err) {
+    if (!state.solved[3]) state.subtasks[3].d = false;
+    outEl.textContent = String(err);
+    setSubtaskFeedback(3, "d", false, "Compile failed. Fix the Python code and try again.");
+    updateSubtaskUI(3, "d");
+    renderTask3CheckState();
+  } finally {
+    if (py?.globals) {
+      try { py.globals.delete("__agent_code__"); } catch {}
+    }
+  }
+}
+
+async function runAgentPrompt(editorId, promptId, outputId) {
+  const outEl = document.getElementById(outputId);
+  const promptValue = document.getElementById(promptId).value.trim();
+  const code = document.getElementById(editorId).value;
+
+  if (!state.subtasks[3].d) {
+    outEl.textContent = "Compile the agent first.";
+    return;
+  }
+
+  if (!promptValue) {
+    outEl.textContent = "Enter a room number first.";
+    return;
+  }
+
+  let py;
+  outEl.textContent = "Running agent…";
+  try {
+    py = await ensurePyodide();
+    bindPythonOutput(py, outEl);
+    py.globals.set("__agent_code__", code);
+    py.globals.set("__agent_prompt__", promptValue);
+    outEl.textContent = "";
+    await py.runPythonAsync(`
+import builtins
+
+agent_code = __agent_code__
+agent_prompt = str(__agent_prompt__)
+original_input = builtins.input
+
+def mock_input(prompt=""):
+    if prompt:
+        print(prompt)
+    return agent_prompt
+
+namespace = {"__name__": "__main__"}
+
+try:
+    builtins.input = mock_input
+    exec(compile(agent_code, "<agent>", "exec"), namespace)
+finally:
+    builtins.input = original_input
+`);
+    if (!outEl.textContent.trim()) {
+      outEl.textContent = "Agent ran, but it did not print any output.";
+    }
   } catch (err) {
     outEl.textContent = String(err);
+  } finally {
+    if (py?.globals) {
+      try { py.globals.delete("__agent_code__"); } catch {}
+      try { py.globals.delete("__agent_prompt__"); } catch {}
+    }
   }
 }
 
@@ -500,9 +820,19 @@ function attachEvents() {
     btn.addEventListener("click", () => showSection(btn.dataset.next));
   });
 
-  // Python runners
-  document.querySelectorAll("[data-run-py]").forEach((btn) => {
-    btn.addEventListener("click", () => runPython(btn.dataset.runPy, btn.dataset.output));
+  // Python compile actions
+  document.querySelectorAll("[data-compile-agent]").forEach((btn) => {
+    btn.addEventListener("click", () => compileAgent(Number(btn.dataset.compileAgent), btn.dataset.editor, btn.dataset.output));
+  });
+
+  // Agent prompt runners
+  document.querySelectorAll("[data-run-agent]").forEach((btn) => {
+    btn.addEventListener("click", () => runAgentPrompt(btn.dataset.editor, btn.dataset.prompt, btn.dataset.output));
+  });
+
+  // Task 3 final room audit
+  document.querySelectorAll("[data-check-room-audit]").forEach((btn) => {
+    btn.addEventListener("click", () => checkTask3RoomAudit());
   });
 
   // Mobile menu toggle
@@ -535,7 +865,7 @@ function attachEvents() {
     resetState();
     localStorage.removeItem(STORAGE_KEY);
 
-    Object.entries({ 1: ["a", "b"], 2: ["a", "b", "c", "d"] }).forEach(([level, keys]) => {
+    Object.entries({ 1: ["a", "b"], 2: ["a", "b", "c", "d"], 3: ["a", "b", "c", "d"] }).forEach(([level, keys]) => {
       const l = Number(level);
       keys.forEach((k) => {
         setSubtaskFeedback(l, k, false, "");
@@ -554,9 +884,13 @@ function attachEvents() {
       const nextBtn = document.getElementById(`nextTask${l}`);
       if (nextBtn) nextBtn.classList.add("hidden");
     });
-    ["l1Sub1", "l1Sub2", "l2Sub1", "l2Sub2", "l2Sub3", "l2Sub4"].forEach((id) => {
+    ["l1Sub1", "l1Sub2", "l2Sub1", "l2Sub2", "l2Sub3", "l2Sub4", "l3Sub1", "l3Sub2", "l3Sub3", "agentPrompt3", "l3Room5", "l3Room8", "l3Room11", "l3Room14"].forEach((id) => {
       const el = document.getElementById(id);
       if (el) el.value = "";
+    });
+    ["pyOut3", "agentConsoleOut3"].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = "";
     });
 
     const gateFeedback = document.getElementById("gateFeedback2");
@@ -575,6 +909,11 @@ function attachEvents() {
     const l2Nav = document.querySelector('.nav-item[data-target="level-2"]');
     l2Nav.classList.add("locked");
     l2Nav.querySelector(".nav-icon").textContent = "2";
+    const l3Nav = document.querySelector('.nav-item[data-target="level-3"]');
+    if (l3Nav) {
+      l3Nav.classList.add("locked");
+      l3Nav.querySelector(".nav-icon").textContent = "3";
+    }
 
     renderSubtaskState();
     renderGateStates();
@@ -592,7 +931,8 @@ function init() {
   updateStatsUI();
   attachEvents();
 
-  if (state.solved[2]) showSection("level-2");
+  if (state.solved[3]) showSection("level-3");
+  else if (state.solved[2]) showSection("level-2");
   else if (state.solved[1]) showSection("level-1");
   else showSection("start");
 }

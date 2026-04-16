@@ -30,11 +30,11 @@
         <span class="nav-icon nav-locked-icon">2</span> Inflated Invoice
       </button>
       <button class="nav-item locked" data-target="level-3">
-        <span class="nav-icon nav-locked-icon">3</span> Coming Soon
+        <span class="nav-icon nav-locked-icon">3</span> Build the Cost Agent
       </button>
     </nav>
     <div class="sidebar-score">
-      <div class="score-row"><span>Progress</span><strong id="progressText">0 / 2</strong></div>
+      <div class="score-row"><span>Progress</span><strong id="progressText">0 / 3</strong></div>
       <div class="score-row"><span>Score</span><strong id="scoreText">0</strong></div>
     </div>
     <button id="resetProgressBtn" class="btn btn-ghost btn-sm">Reset progress</button>
@@ -227,24 +227,8 @@
               The main contractor has now sent over a renovation quote: a list of every repair job,
               how many square metres it covers, and what it costs.
             </p>
-            <p class="scenario">Your project manager reviewed it over the weekend. His message arrived at 06:42 on Monday:</p>
-            <article class="mail-card" aria-label="Project manager email">
-              <div class="mail-meta">
-                <div><strong>From:</strong> Project Manager</div>
-                <div><strong>Sent:</strong> Monday, 06:42</div>
-                <div><strong>Subject:</strong> Renovation quote review needed</div>
-              </div>
-              <div class="mail-body">
-                <p>
-                  "These numbers don't add up. The inspector estimated around CNY 240,000 for all
-                  the repairs. The contractor is now billing us CNY 308,000 — that's CNY 68,000
-                  more. I need someone to go through this line by line and find out exactly what's wrong."
-                </p>
-              </div>
-            </article>
             <p class="scenario">
-              You've been handed the raw data. Your mission: find the overcharges, prove them, and
-              calculate what the repairs should actually cost.
+              You've been handed the raw data. Answer correctly to unlock next task. 
             </p>
           </div>
           <div class="task-section">
@@ -493,10 +477,10 @@
                 <label for="l2Sub2">Which room has the highest total repair cost according to the contractor?</label>
                 <input id="l2Sub2" type="hidden" />
                 <div class="choice-grid" role="group" aria-label="Choose the room with the highest total repair cost">
-                  <button type="button" class="choice-option" data-choice-subtask="2b" data-choice-value="5">Room 5</button>
-                  <button type="button" class="choice-option" data-choice-subtask="2b" data-choice-value="8">Room 8</button>
-                  <button type="button" class="choice-option" data-choice-subtask="2b" data-choice-value="11">Room 11</button>
-                  <button type="button" class="choice-option" data-choice-subtask="2b" data-choice-value="14">Room 14</button>
+                  <button type="button" class="choice-option" data-choice-subtask="2b" data-choice-value="5"> 小餐厅 </button>
+                  <button type="button" class="choice-option" data-choice-subtask="2b" data-choice-value="8">	厨房 </button>
+                  <button type="button" class="choice-option" data-choice-subtask="2b" data-choice-value="11"> 理发室 </button>
+                  <button type="button" class="choice-option" data-choice-subtask="2b" data-choice-value="14"> 入口 </button>
                 </div>
                 <p id="subFeedback2b" class="sub-feedback"></p>
               </div>
@@ -532,7 +516,7 @@
       <div class="card">
         <div class="task-head">
           <div class="task-head-copy">
-            <h2>Task 3 · Coming Soon</h2>
+            <h2>Task 3 · Build the Cost Agent</h2>
           </div>
           <div class="task-head-side">
             <div class="task-estimate" hidden></div>
@@ -540,20 +524,216 @@
           </div>
         </div>
         <div class="task-intro">
-          <p class="scenario">This challenge is not yet available.</p>
+          <p class="scenario">
+            Your project manager reviewed it over the weekend. His message arrived at 06:42 on Monday:
+          </p>
+          <article class="mail-card" aria-label="Project manager email">
+            <div class="mail-meta">
+              <div><strong>From:</strong> Project Manager</div>
+              <div><strong>Sent:</strong> Monday, 06:42</div>
+              <div><strong>Subject:</strong> Renovation quote review needed</div>
+            </div>
+            <div class="mail-body">
+              <p>
+                "These numbers don't add up. The inspector estimated around CNY 240,000 for all
+                the repairs. The contractor is now billing us CNY 308,000 — that's CNY 68,000
+                more. I need someone to go through this line by line and find out exactly what's wrong."
+              </p>
+            </div>
+          </article>
+          <p class="scenario">
+            Now the project manager wants a tiny internal agent that can answer one simple question:
+            <strong>“If I type a room number, tell me how much that room was overcharged.”</strong>
+          </p>
+          <p class="scenario">Your task is to assemble the Agent Protocol Stack to build this agent.</p>
           <p class="task-reminder"><strong>Remember:</strong> Try to divide the tasks across the group.</p>
         </div>
+
+        <div class="task-section">
+          <p class="section-kicker">Protocol Stack</p>
+          <h3>The agent is offline</h3>
+          <p class="section-note">Unlock the four connection points to activate the stack.</p>
+
+          <div class="stack-grid">
+            <div class="protocol-box">
+              <p class="section-kicker">Box 1 · The Path</p>
+              <h4>The navigation module is missing its map.</h4>
+              <p>
+                Draw a line between the four critical rooms in the order you unlocked them in Task 1:
+                <strong>5 → 8 → 11 → 14</strong>. Sketch it on your pad. What letter does the path resemble?
+              </p>
+              <div class="row">
+                <input id="l3Sub1" type="text" placeholder="Enter the letter" autocomplete="off" />
+                <button class="btn" data-check-subtask="3a">Check</button>
+              </div>
+              <p id="subFeedback3a" class="sub-feedback"></p>
+              <div id="fragment3a" class="protocol-reveal hidden">
+                <strong>Dataset unlocked:</strong> Contractor Quotes from report:
+                Room 5: 39,000 | Room 8: 92,300 | Room 11: 89,900 | Room 14: 87,340
+              </div>
+            </div>
+
+            <div class="protocol-box">
+              <p class="section-kicker">Box 2 · The Foundation</p>
+              <h4>The system core requires a handshake.</h4>
+              <p>
+                It only processes machine language (Binary). Enter the year Symetri was founded to initialize the kernel.
+              </p>
+              <div class="row">
+                <input id="l3Sub2" type="text" placeholder="Binary value" autocomplete="off" />
+                <button class="btn" data-check-subtask="3b">Check</button>
+              </div>
+              <p id="subFeedback3b" class="sub-feedback"></p>
+              <div id="fragment3b" class="protocol-reveal hidden">
+                <strong>Dataset unlocked:</strong> Approved Budget from excel sheet:
+                Room 5: 30,200 | Room 8: 66,220 | Room 11: 81,540 | Room 14: 62,860
+              </div>
+            </div>
+
+            <div class="protocol-box">
+              <p class="section-kicker">Box 3 · The Critical Leak</p>
+              <h4>The agent needs a target.</h4>
+              <p>
+                Go back to the inspection report from Task 1 and find the most critical room there.
+                Use that room as the target for the "Urgency Index".
+                Riddle: <em>"The Well's center holds the key, but the danger lies where guests first set foot."</em>
+              </p>
+              <div class="row">
+                <input id="l3Sub3" type="text" placeholder="Enter the room" autocomplete="off" />
+                <button class="btn" data-check-subtask="3c">Check</button>
+              </div>
+              <p id="subFeedback3c" class="sub-feedback"></p>
+              <div id="fragment3c" class="protocol-reveal hidden">
+                <strong>Target confirmed:</strong> Main Entrance, Room 14. Prompt-number: <strong>14</strong>.
+              </div>
+            </div>
+
+            <div class="protocol-box">
+              <p class="section-kicker">Box 4 · Run Container</p>
+              <h4>The agent is ready for its instructions.</h4>
+              <p>
+                Feed it with Python code that uses the datasets unlocked in Box 1 and Box 2, accepts a room number, and prints the overcharge for that room.
+              </p>
+              <textarea id="pyEditor3" class="py-editor" rows="14" spellcheck="false"># Add the datasets you unlocked in Box 1 and Box 2 here.
+contractor_quotes = {
+}
+
+approved_budget = {
+}
+
+# Build the Cost Agent here.
+# Requirements:
+# 1. Ask for a room number using input()
+# 2. Calculate the overcharge for that room
+# 3. Print the result clearly</textarea>
+              <div class="actions">
+                <button id="compileAgent3" class="btn btn-sm" data-compile-agent="3" data-editor="pyEditor3" data-output="pyOut3">Compile agent</button>
+              </div>
+              <pre id="pyOut3" class="py-output"></pre>
+              <p id="subFeedback3d" class="sub-feedback"></p>
+              <div id="fragment3d" class="protocol-reveal hidden">
+                <strong>Cost Agent online.</strong> The stack is active and the live prompt console is unlocked.
+              </div>
+            </div>
+          </div>
+
+          <p id="codeGuide3" class="guide">Unlock Box 1-3, then compile your agent to bring the console online.</p>
+        </div>
+
+        <div class="task-section">
+          <p class="section-kicker">Visual Reference</p>
+          <h3>Unlock the stack nodes</h3>
+          <p class="section-note">Each solved box unlocks one more node and pushes the workflow closer to the live Python audit.</p>
+          <div class="stack-diagram" aria-label="Diagram of the Agent Protocol Stack">
+            <div class="stack-lane lane-top" data-stack-lane="top" aria-hidden="true"></div>
+            <div class="stack-lane lane-drop-left" data-stack-lane="left" aria-hidden="true"></div>
+            <div class="stack-lane lane-drop-center" data-stack-lane="center" aria-hidden="true"></div>
+            <div class="stack-lane lane-drop-right" data-stack-lane="right" aria-hidden="true"></div>
+            <div class="stack-lane lane-bottom" data-stack-lane="bottom" aria-hidden="true"></div>
+            <div class="stack-lane lane-output" data-stack-lane="output" aria-hidden="true"></div>
+
+            <article class="stack-node" data-stack-node="3a">
+              <p class="stack-node-kicker">Box 1</p>
+              <h4>The Path</h4>
+              <p>Letter clue unlocks the contractor quote dataset.</p>
+              <span class="stack-state" data-stack-state="3a">Locked</span>
+            </article>
+
+            <article class="stack-node" data-stack-node="3b">
+              <p class="stack-node-kicker">Box 2</p>
+              <h4>The Foundation</h4>
+              <p>Binary handshake unlocks the approved budget dataset.</p>
+              <span class="stack-state" data-stack-state="3b">Locked</span>
+            </article>
+
+            <article class="stack-node" data-stack-node="3c">
+              <p class="stack-node-kicker">Box 3</p>
+              <h4>Critical Leak</h4>
+              <p>Target room clue unlocks the final prompt-number.</p>
+              <span class="stack-state" data-stack-state="3c">Locked</span>
+            </article>
+
+            <article class="stack-node stack-node-run" data-stack-node="3run">
+              <p class="stack-node-kicker">Run Step</p>
+              <h4>Python Container</h4>
+              <p>Combine the unlocked data and run the Cost Agent logic.</p>
+              <span class="stack-state" data-stack-state="3run">Waiting</span>
+            </article>
+
+            <article class="stack-node stack-node-goal" data-stack-node="3d">
+              <p class="stack-node-kicker">Final Output</p>
+              <h4>Agent Online</h4>
+              <p>Compile the agent successfully and unlock the live room prompt.</p>
+              <span class="stack-state" data-stack-state="3d">Locked</span>
+            </article>
+          </div>
+          <p id="agentStatus3" class="agent-status">Compile the Python agent to bring the live prompt console online.</p>
+          <div id="agentConsole3" class="agent-console hidden">
+            <label for="agentPrompt3">Prompt the agent with a room number</label>
+            <div class="row">
+              <input id="agentPrompt3" type="text" placeholder="Enter room number, e.g. 8" autocomplete="off" />
+              <button class="btn" data-run-agent="3" data-editor="pyEditor3" data-prompt="agentPrompt3" data-output="agentConsoleOut3">Run prompt</button>
+            </div>
+            <pre id="agentConsoleOut3" class="py-output"></pre>
+          </div>
+        </div>
+
+        <div class="task-section">
+          <p class="section-kicker">Finish</p>
+          <h3>Activate the Cost Agent</h3>
+          <p class="section-note">Once the AI generates your code, compile it and test the agent with room-number prompts.</p>
+          <div class="audit-answer-panel">
+            <p class="audit-answer-note">Type the overcharge amount for each room using digits only, without dots or commas.</p>
+            <div class="audit-answer-grid">
+              <label class="audit-answer-field" for="l3Room5">
+                <span>Room 5</span>
+                <input id="l3Room5" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Enter amount" autocomplete="off" />
+              </label>
+              <label class="audit-answer-field" for="l3Room8">
+                <span>Room 8</span>
+                <input id="l3Room8" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Enter amount" autocomplete="off" />
+              </label>
+              <label class="audit-answer-field" for="l3Room11">
+                <span>Room 11</span>
+                <input id="l3Room11" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Enter amount" autocomplete="off" />
+              </label>
+              <label class="audit-answer-field" for="l3Room14">
+                <span>Room 14</span>
+                <input id="l3Room14" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Enter amount" autocomplete="off" />
+              </label>
+            </div>
+            <div class="actions">
+              <button class="btn" data-check-room-audit="3">Check room answers</button>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-sm btn-hint hint-btn" data-level="3">Hint (−3 pts)</button>
+          </div>
+          <p id="hint3" class="hint hidden"></p>
+          <p id="feedback3" class="feedback"></p>
+          <button id="nextTask3" class="btn btn-primary btn-next hidden" data-next="start">Finish challenge →</button>
+        </div>
       </div>
-      <!-- Python sandbox -->
-      <details class="card tool-card">
-        <summary>Python Sandbox</summary>
-        <p class="tool-desc">Try extracting structured data from the report text with Python.</p>
-        <textarea id="pyEditor1" class="py-editor" rows="6" spellcheck="false">report_floors = {"B1": "minor", "1F": "moderate", "5F": "severe", "8F": "cosmetic"}
-worst = max(report_floors, key=lambda f: ["cosmetic","minor","moderate","severe"].index(report_floors[f]))
-print(f"Most severe damage: floor {worst}")</textarea>
-        <button class="btn btn-sm" data-run-py="pyEditor1" data-output="pyOut1">▶ Run</button>
-        <pre id="pyOut1" class="py-output"></pre>
-      </details>
     </section>
   </main>
   <!-- ═══════════ RIGHT PANEL — FACT BOXES ═══════════ -->
@@ -618,8 +798,27 @@ print(f"Most severe damage: floor {worst}")</textarea>
       </p>
       <hr />
     </div>
+    <!-- shown on Task 3 -->
+    <div class="fact fact-ai" data-for="level-3">
+      <h3><span class="ai-sparkle">✦</span> AI Fact</h3>
+      <p><strong>AI agents are redefining cost management in AECO projects.</strong></p>
+      <div class="fact-media">
+        <img src="assets/gemini.png" alt="Google Gemini visual for AI cost management" loading="lazy" />
+      </div>
+      <p>
+        In the world of construction and design, fragmented data like inconsistent contractor quotes
+        and complex budget sheets often leads to project delays. By leveraging LLMs like Google Gemini,
+        you can instantly build custom Python-based agents to reconcile these datasets.
+      </p>
+      <p>
+        Whether you are automating budget analysis, identifying overcharges, or streamlining project
+        workflows, AI does not just assist; it transforms how you manage project financial health.
+        By using tools like Google AI Studio, you can turn complex project data into actionable business
+        intelligence in seconds.
+      </p>
+    </div>
   </aside>
 </div>
 <script src="app.js"></script>
-</body>
+</body> 
 </html>
