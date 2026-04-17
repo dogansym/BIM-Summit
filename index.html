@@ -117,6 +117,9 @@
             carefully. Find the hidden unlock code.
           </p>
           <p class="task-reminder"><strong>Remember:</strong> Try to divide the tasks across the group.</p>
+          <figure class="img-frame task-intro-image">
+            <img src="assets/chinese_hotel.jpg" alt="Hotel reference image for the damaged building task" loading="lazy" />
+          </figure>
         </div>
         <div class="task-section">
           <p class="section-kicker">Source 1</p>
@@ -188,31 +191,36 @@
           <p class="section-kicker">Gate Challenge</p>
           <h3>🔐 THE GATE RIDDLE</h3>
           <p class="gate-tagline">— Solve the riddle. Choose your room. Open the gate. —</p>
-          <div class="gate-riddle">
-            <p>Before this keep was raised in stone, before these walls saw light,<br />I slumbered deep beneath the earth, through many a forgotten night.</p>
-            <p>No mason laid my bricks in place, no lord decreed my form —<br />The builders found me in the ground, and left me to conform.</p>
-            <p>I am no hall where feasts are held, no kitchen, spa, or door,<br />No numbered chamber greets its guests upon my silent floor.</p>
-            <p>Yet on this plan my mark is set, where ancient kingdoms fell —<br />Find my number on the map... I am the ancient well.</p>
+          <div class="gate-riddle-layout">
+            <div class="gate-riddle">
+              <p>Before this keep was raised in stone, before these walls saw light,<br />I slumbered deep beneath the earth, through many a forgotten night.</p>
+              <p>No mason laid my bricks in place, no lord decreed my form —<br />The builders found me in the ground, and left me to conform.</p>
+              <p>I am no hall where feasts are held, no kitchen, spa, or door,<br />No numbered chamber greets its guests upon my silent floor.</p>
+              <p>Yet on this plan my mark is set, where ancient kingdoms fell —<br />Find my number on the map... I am the ancient well.</p>
+              <p class="gate-question">Which room number am I?</p>
+              <div class="room-grid" role="group" aria-label="Choose the correct room number">
+                <button type="button" class="room-choice" data-gate-level="2" data-gate-room="1" aria-label="Room 1">1</button>
+                <button type="button" class="room-choice" data-gate-level="2" data-gate-room="2" aria-label="Room 2">2</button>
+                <button type="button" class="room-choice" data-gate-level="2" data-gate-room="3" aria-label="Room 3">3</button>
+                <button type="button" class="room-choice" data-gate-level="2" data-gate-room="4" aria-label="Room 4">4</button>
+                <button type="button" class="room-choice" data-gate-level="2" data-gate-room="5" aria-label="Room 5">5</button>
+                <button type="button" class="room-choice" data-gate-level="2" data-gate-room="6" aria-label="Room 6">6</button>
+                <button type="button" class="room-choice" data-gate-level="2" data-gate-room="7" aria-label="Room 7">7</button>
+                <button type="button" class="room-choice" data-gate-level="2" data-gate-room="8" aria-label="Room 8">8</button>
+                <button type="button" class="room-choice" data-gate-level="2" data-gate-room="9" aria-label="Room 9">9</button>
+                <button type="button" class="room-choice" data-gate-level="2" data-gate-room="10" aria-label="Room 10">10</button>
+                <button type="button" class="room-choice" data-gate-level="2" data-gate-room="11" aria-label="Room 11">11</button>
+                <button type="button" class="room-choice" data-gate-level="2" data-gate-room="12" aria-label="Room 12">12</button>
+                <button type="button" class="room-choice" data-gate-level="2" data-gate-room="13" aria-label="Room 13">13</button>
+                <button type="button" class="room-choice" data-gate-level="2" data-gate-room="14" aria-label="Room 14">14</button>
+                <button type="button" class="room-choice" data-gate-level="2" data-gate-room="15" aria-label="Room 15">15</button>
+              </div>
+              <p id="gateFeedback2" class="feedback gate-feedback"></p>
+            </div>
+            <figure class="gate-image-frame">
+              <img src="assets/the_gate.jpg" alt="Illustration of the gate challenge" loading="lazy" />
+            </figure>
           </div>
-          <p class="gate-question">Which room number am I?</p>
-          <div class="room-grid" role="group" aria-label="Choose the correct room number">
-            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="1" aria-label="Room 1">1</button>
-            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="2" aria-label="Room 2">2</button>
-            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="3" aria-label="Room 3">3</button>
-            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="4" aria-label="Room 4">4</button>
-            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="5" aria-label="Room 5">5</button>
-            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="6" aria-label="Room 6">6</button>
-            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="7" aria-label="Room 7">7</button>
-            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="8" aria-label="Room 8">8</button>
-            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="9" aria-label="Room 9">9</button>
-            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="10" aria-label="Room 10">10</button>
-            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="11" aria-label="Room 11">11</button>
-            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="12" aria-label="Room 12">12</button>
-            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="13" aria-label="Room 13">13</button>
-            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="14" aria-label="Room 14">14</button>
-            <button type="button" class="room-choice" data-gate-level="2" data-gate-room="15" aria-label="Room 15">15</button>
-          </div>
-          <p id="gateFeedback2" class="feedback gate-feedback"></p>
         </div>
         <div id="task2UnlockedContent" class="hidden">
           <div class="task-section">
@@ -512,7 +520,7 @@
       </div>
     </section>
     <!-- ── TASK 3 (placeholder) ── -->
-    <section id="level-3" class="view hidden" aria-live="polite" data-time-without-ai="" data-time-with-ai="">
+    <section id="level-3" class="view hidden" aria-live="polite" data-time-without-ai="20-30 min" data-time-with-ai="8-12 min">
       <div class="card">
         <div class="task-head">
           <div class="task-head-copy">
@@ -556,65 +564,91 @@
 
           <div class="stack-grid">
             <div class="protocol-box">
-              <p class="section-kicker">Box 1 · The Path</p>
-              <h4>The navigation module is missing its map.</h4>
-              <p>
-                Draw a line between the four critical rooms in the order you unlocked them in Task 1:
-                <strong>5 → 8 → 11 → 14</strong>. Sketch it on your pad. What letter does the path resemble?
-              </p>
-              <div class="row">
-                <input id="l3Sub1" type="text" placeholder="Enter the letter" autocomplete="off" />
-                <button class="btn" data-check-subtask="3a">Check</button>
-              </div>
-              <p id="subFeedback3a" class="sub-feedback"></p>
-              <div id="fragment3a" class="protocol-reveal hidden">
-                <strong>Dataset unlocked:</strong> Contractor Quotes from report:
-                Room 5: 39,000 | Room 8: 92,300 | Room 11: 89,900 | Room 14: 87,340
-              </div>
-            </div>
-
-            <div class="protocol-box">
-              <p class="section-kicker">Box 2 · The Foundation</p>
-              <h4>The system core requires a handshake.</h4>
-              <p>
-                It only processes machine language (Binary). Enter the year Symetri was founded to initialize the kernel.
-              </p>
-              <div class="row">
-                <input id="l3Sub2" type="text" placeholder="Binary value" autocomplete="off" />
-                <button class="btn" data-check-subtask="3b">Check</button>
-              </div>
-              <p id="subFeedback3b" class="sub-feedback"></p>
-              <div id="fragment3b" class="protocol-reveal hidden">
-                <strong>Dataset unlocked:</strong> Approved Budget from excel sheet:
-                Room 5: 30,200 | Room 8: 66,220 | Room 11: 81,540 | Room 14: 62,860
+              <div class="protocol-box-layout">
+                <div class="protocol-box-copy">
+                  <p class="section-kicker">Box 1 · The Path</p>
+                  <h4>The navigation module is missing its map.</h4>
+                  <figure class="protocol-box-media">
+                    <img src="assets/box_1.png" alt="Visual reference for Box 1" loading="lazy" />
+                  </figure>
+                  <p>
+                    Draw a line between the four critical rooms in the order you unlocked them in Task 1:
+                    <strong>X → X → X → X</strong>. Sketch it on your pad. What letter does the path resemble?
+                  </p>
+                  <div class="row">
+                    <input id="l3Sub1" type="text" placeholder="Enter the letter" autocomplete="off" />
+                    <button class="btn" data-check-subtask="3a">Check</button>
+                  </div>
+                  <p id="subFeedback3a" class="sub-feedback"></p>
+                  <div id="fragment3a" class="protocol-reveal hidden">
+                    <strong>Dataset unlocked:</strong> Contractor Quotes from report:
+                    Room 5: 39,000 | Room 8: 92,300 | Room 11: 89,900 | Room 14: 87,340
+                  </div>
+                </div>
               </div>
             </div>
 
             <div class="protocol-box">
-              <p class="section-kicker">Box 3 · The Critical Leak</p>
-              <h4>The agent needs a target.</h4>
-              <p>
-                Go back to the inspection report from Task 1 and find the most critical room there.
-                Use that room as the target for the "Urgency Index".
-                Riddle: <em>"The Well's center holds the key, but the danger lies where guests first set foot."</em>
-              </p>
-              <div class="row">
-                <input id="l3Sub3" type="text" placeholder="Enter the room" autocomplete="off" />
-                <button class="btn" data-check-subtask="3c">Check</button>
-              </div>
-              <p id="subFeedback3c" class="sub-feedback"></p>
-              <div id="fragment3c" class="protocol-reveal hidden">
-                <strong>Target confirmed:</strong> Main Entrance, Room 14. Prompt-number: <strong>14</strong>.
+              <div class="protocol-box-layout">
+                <div class="protocol-box-copy">
+                  <p class="section-kicker">Box 2 · The Foundation</p>
+                  <h4>The system core requires a handshake.</h4>
+                  <figure class="protocol-box-media">
+                    <img src="assets/box_2.png" alt="Visual reference for Box 2" loading="lazy" />
+                  </figure>
+                  <p>
+                    It only processes machine language (Binary). Enter the year Symetri was founded to initialize the kernel.
+                  </p>
+                  <div class="row">
+                    <input id="l3Sub2" type="text" placeholder="Binary value" autocomplete="off" />
+                    <button class="btn" data-check-subtask="3b">Check</button>
+                  </div>
+                  <p id="subFeedback3b" class="sub-feedback"></p>
+                  <div id="fragment3b" class="protocol-reveal hidden">
+                    <strong>Dataset unlocked:</strong> Approved Budget from excel sheet:
+                    Room 5: 30,200 | Room 8: 66,220 | Room 11: 81,540 | Room 14: 62,860
+                  </div>
+                </div>
               </div>
             </div>
 
             <div class="protocol-box">
-              <p class="section-kicker">Box 4 · Run Container</p>
-              <h4>The agent is ready for its instructions.</h4>
-              <p>
-                Feed it with Python code that uses the datasets unlocked in Box 1 and Box 2, accepts a room number, and prints the overcharge for that room.
-              </p>
-              <textarea id="pyEditor3" class="py-editor" rows="14" spellcheck="false"># Add the datasets you unlocked in Box 1 and Box 2 here.
+              <div class="protocol-box-layout">
+                <div class="protocol-box-copy">
+                  <p class="section-kicker">Box 3 · The Critical Leak</p>
+                  <h4>The agent needs a target.</h4>
+                  <figure class="protocol-box-media">
+                    <img src="assets/box_3.png" alt="Visual reference for Box 3" loading="lazy" />
+                  </figure>
+                  <p>
+                    Go back to the inspection report from Task 1 and find the most critical room there.
+                    Use that room as the target for the "Urgency Index".
+                    Riddle: <em>"The Well's center holds the key, but the danger lies where guests first set foot."</em>
+                  </p>
+                  <div class="row">
+                    <input id="l3Sub3" type="text" placeholder="Enter the room" autocomplete="off" />
+                    <button class="btn" data-check-subtask="3c">Check</button>
+                  </div>
+                  <p id="subFeedback3c" class="sub-feedback"></p>
+                  <div id="fragment3c" class="protocol-reveal hidden">
+                    <strong>Target confirmed:</strong> Main Entrance, Room 14. Prompt-number: <strong>14</strong>.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="protocol-box">
+              <div class="protocol-box-layout">
+                <div class="protocol-box-copy">
+                  <p class="section-kicker">Box 4 · Run Container</p>
+                  <h4>The agent is ready for its instructions.</h4>
+                  <figure class="protocol-box-media">
+                    <img src="assets/box_4.png" alt="Visual reference for Box 4" loading="lazy" />
+                  </figure>
+                  <p>
+                    Feed it with Python code that uses the datasets unlocked in Box 1 and Box 2, accepts a room number, and prints the overcharge for that room.
+                  </p>
+                  <textarea id="pyEditor3" class="py-editor" rows="14" spellcheck="false"># Add the datasets you unlocked in Box 1 and Box 2 here.
 contractor_quotes = {
 }
 
@@ -626,13 +660,15 @@ approved_budget = {
 # 1. Ask for a room number using input()
 # 2. Calculate the overcharge for that room
 # 3. Print the result clearly</textarea>
-              <div class="actions">
-                <button id="compileAgent3" class="btn btn-sm" data-compile-agent="3" data-editor="pyEditor3" data-output="pyOut3">Compile agent</button>
-              </div>
-              <pre id="pyOut3" class="py-output"></pre>
-              <p id="subFeedback3d" class="sub-feedback"></p>
-              <div id="fragment3d" class="protocol-reveal hidden">
-                <strong>Cost Agent online.</strong> The stack is active and the live prompt console is unlocked.
+                  <div class="actions">
+                    <button id="compileAgent3" class="btn btn-sm" data-compile-agent="3" data-editor="pyEditor3" data-output="pyOut3">Compile agent</button>
+                  </div>
+                  <pre id="pyOut3" class="py-output"></pre>
+                  <p id="subFeedback3d" class="sub-feedback"></p>
+                  <div id="fragment3d" class="protocol-reveal hidden">
+                    <strong>Cost Agent online.</strong> The stack is active and the live prompt console is unlocked.
+                  </div>
+                </div>
               </div>
             </div>
           </div>
