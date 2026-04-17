@@ -884,6 +884,35 @@ function tryGate(level, room) {
   setGateFeedback(level, false, "That room does not open the gate. Read the riddle again.");
 }
 
+/* ─── admin skip ─── */
+function skipToLevel(level) {
+  // Unlock all levels before the target
+  for (let l = 1; l < level; l++) {
+    state.solved[l] = true;
+    if (l === 2) {
+      state.gates[2] = true;
+      state.subtasks[2] = { a: true, b: true, c: true, d: true };
+    }
+    if (l === 3) {
+      state.subtasks[3] = { a: true, b: true, c: true, d: true };
+      state.audits[3] = true;
+    }
+  }
+  // Open the gate on the target level if it has one
+  if (level === 2) state.gates[2] = true;
+  if (level === 4) state.gates[4] = true;
+
+  state.score =
+    (Number(state.solved[1]) + Number(state.solved[2]) + Number(state.solved[3]) + Number(state.solved[4])) * 10
+    - (Number(state.hintsUsed[1]) + Number(state.hintsUsed[2]) + Number(state.hintsUsed[3]) + Number(state.hintsUsed[4])) * 3;
+
+  renderSubtaskState();
+  renderGateStates();
+  updateStatsUI();
+  saveProgress();
+  showSection(`level-${level}`);
+}
+
 /* ─── navigation ─── */
 function showSection(id) {
   document.querySelectorAll(".view").forEach((s) => s.classList.toggle("hidden", s.id !== id));
@@ -1265,6 +1294,16 @@ function attachEvents() {
   bindLightbox("floorplanThumb", "lightbox", "lightboxClose");
   bindLightbox("site2ThumbGate", "site2LightboxGate", "site2LightboxGateClose");
   bindLightbox("site2Thumb", "site2Lightbox", "site2LightboxClose");
+
+  // Skip to task (requires admin code)
+  document.getElementById("skipTaskBtn").addEventListener("click", () => {
+    const code = prompt("Enter admin code:");
+    if (code !== "symadmin") return;
+    const raw = prompt("Jump to task (1 – 4):");
+    const level = Number(raw);
+    if (!level || level < 1 || level > 4) return;
+    skipToLevel(level);
+  });
 
   // Reset (requires admin code)
   document.getElementById("resetProgressBtn").addEventListener("click", () => {

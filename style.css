@@ -1401,6 +1401,7 @@ input:focus, textarea:focus {
 .btn-primary:hover { background: var(--primary-hover); }
 
 .btn-ghost { background: transparent; border-color: var(--line); }
+.btn-skip { border-color: rgba(0, 169, 157, 0.3); color: rgba(0, 169, 157, 0.75); margin-top: 0.3rem; }
 
 .btn-hint {
   background: rgba(210, 153, 34, 0.12);
