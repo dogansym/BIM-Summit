@@ -7,15 +7,16 @@ const STORAGE_TTL_MS = 1000 * 60 * 60 * 24 * 14;
 
 const state = {
   score: 0,
-  solved: { 1: false, 2: false, 3: false },
-  hintsUsed: { 1: false, 2: false, 3: false },
+  solved: { 1: false, 2: false, 3: false, 4: false },
+  hintsUsed: { 1: false, 2: false, 3: false, 4: false },
   subtasks: {
     1: { a: true, b: true },
     2: { a: false, b: false, c: false, d: false },
     3: { a: false, b: false, c: false, d: false },
   },
   audits: { 3: false },
-  gates: { 2: false },
+  gates: { 2: false, 4: false },
+  task4: { decoded: { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false } },
   updatedAt: 0,
 };
 
@@ -23,6 +24,7 @@ const hints = {
   1: "Try to find the critical rooms in the report",
   2: "Ask AI to answer all questions at once by uploading the excel sheet or copy/paste",
   3: "I am building a Cost Agent. I have provided the Contractor's Quotes and the Approved Budget for four rooms. Write a compact Python script that stores these two datasets, calculates the overcharge (Contractor - Approved) for each room, and allows a user to input a room number to see the specific overcharge for that room. If the room is not found, print 'No overcharge detected'.",
+  4: "Decode the assignees first. Then look for the person tied to both Kitchen and Main Entrance, and compare that with the 02:47 low-confidence log entry.",
 };
 
 const TASK3_ROOM_OVERCHARGES = {
@@ -32,13 +34,43 @@ const TASK3_ROOM_OVERCHARGES = {
   14: 24480,
 };
 
+const TASK4_GATE_ANSWER = "A-2";
+const TASK4_DECODE_ANSWERS = {
+  1: "VIKTOR",
+  2: "MARCUS",
+  3: "LENA",
+  4: "OMAR",
+  5: "YUKI",
+  6: "SARA",
+};
+const TASK4_ISSUES = [
+  { id: "IFS-001", location: "Workshop", type: "Safety · PPE", assignee: "VIKTOR", confidence: 94 },
+  { id: "IFS-002", location: "Courtyard", type: "Access", assignee: "MARCUS", confidence: 87 },
+  { id: "IFS-003", location: "Entrance corridor", type: "Safety · PPE", assignee: "LENA", confidence: 91 },
+  { id: "IFS-004", location: "Exterior grounds", type: "Hazard", assignee: "OMAR", confidence: 68 },
+  { id: "IFS-005", location: "Rooftop", type: "Fire", assignee: "YUKI", confidence: 82 },
+  { id: "IFS-006", location: "Main Entrance", type: "Safety · PPE", assignee: "VIKTOR", confidence: 96 },
+  { id: "IFS-007", location: "Courtyard", type: "Access", assignee: "SARA", confidence: 89 },
+  { id: "IFS-008", location: "Construction yard", type: "Safety · PPE", assignee: "MARCUS", confidence: 65 },
+  { id: "IFS-009", location: "Kitchen", type: "Hazard", assignee: "VIKTOR", confidence: 34 },
+  { id: "IFS-010", location: "Rooftop", type: "Structural", assignee: "YUKI", confidence: 91 },
+];
+
 /* ─── helpers ─── */
 function normalize(v) {
   return (v || "").toUpperCase().replace(/\s+/g, "").replace(/_/g, "-");
 }
 
+function normalizeNameToken(v) {
+  return String(v || "").toUpperCase().replace(/[^A-Z]/g, "");
+}
+
 function parseRoomNumbers(v) {
   return [...new Set((v || "").match(/\d{3}/g) || [])].map(Number).sort((a, b) => a - b);
+}
+
+function emptyTask4Decoded() {
+  return { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false };
 }
 
 /* ─── persistence ─── */
@@ -49,15 +81,16 @@ function saveProgress() {
 
 function resetState() {
   state.score = 0;
-  state.solved = { 1: false, 2: false, 3: false };
-  state.hintsUsed = { 1: false, 2: false, 3: false };
+  state.solved = { 1: false, 2: false, 3: false, 4: false };
+  state.hintsUsed = { 1: false, 2: false, 3: false, 4: false };
   state.subtasks = {
     1: { a: true, b: true },
     2: { a: false, b: false, c: false, d: false },
     3: { a: false, b: false, c: false, d: false },
   };
   state.audits = { 3: false };
-  state.gates = { 2: false };
+  state.gates = { 2: false, 4: false };
+  state.task4 = { decoded: emptyTask4Decoded() };
   state.updatedAt = Date.now();
 }
 
@@ -78,11 +111,13 @@ function loadProgress() {
       1: !!s.solved?.[1],
       2: hasGateState ? !!s.solved?.[2] : false,
       3: hasAuditState ? !!s.solved?.[3] : false,
+      4: !!s.solved?.[4],
     };
     state.hintsUsed = {
       1: !!s.hintsUsed?.[1],
       2: hasGateState ? !!s.hintsUsed?.[2] : false,
       3: !!s.hintsUsed?.[3],
+      4: !!s.hintsUsed?.[4],
     };
     state.subtasks = {
       1: { a: true, b: true },
@@ -102,18 +137,28 @@ function loadProgress() {
       },
     };
     state.audits = { 3: hasAuditState ? !!s.audits?.[3] : false };
-    state.gates = { 2: !!s.gates?.[2] };
+    state.gates = { 2: !!s.gates?.[2], 4: !!s.gates?.[4] };
+    state.task4 = {
+      decoded: {
+        1: !!s.task4?.decoded?.[1],
+        2: !!s.task4?.decoded?.[2],
+        3: !!s.task4?.decoded?.[3],
+        4: !!s.task4?.decoded?.[4],
+        5: !!s.task4?.decoded?.[5],
+        6: !!s.task4?.decoded?.[6],
+      },
+    };
     state.score =
-      (Number(state.solved[1]) + Number(state.solved[2]) + Number(state.solved[3])) * 10
-      - (Number(state.hintsUsed[1]) + Number(state.hintsUsed[2]) + Number(state.hintsUsed[3])) * 3;
+      (Number(state.solved[1]) + Number(state.solved[2]) + Number(state.solved[3]) + Number(state.solved[4])) * 10
+      - (Number(state.hintsUsed[1]) + Number(state.hintsUsed[2]) + Number(state.hintsUsed[3]) + Number(state.hintsUsed[4])) * 3;
     state.updatedAt = s.updatedAt;
   } catch { resetState(); }
 }
 
 /* ─── UI updates ─── */
 function updateStatsUI() {
-  const solved = Number(state.solved[1]) + Number(state.solved[2]) + Number(state.solved[3]);
-  document.getElementById("progressText").textContent = `${solved} / 3`;
+  const solved = Number(state.solved[1]) + Number(state.solved[2]) + Number(state.solved[3]) + Number(state.solved[4]);
+  document.getElementById("progressText").textContent = `${solved} / 4`;
   document.getElementById("scoreText").textContent = String(state.score);
 
   const l2Nav = document.querySelector('.nav-item[data-target="level-2"]');
@@ -126,6 +171,12 @@ function updateStatsUI() {
   if (state.solved[2] && l3Nav) {
     l3Nav.classList.remove("locked");
     l3Nav.querySelector(".nav-icon").textContent = "3";
+  }
+
+  const l4Nav = document.querySelector('.nav-item[data-target="level-4"]');
+  if (state.solved[3] && l4Nav) {
+    l4Nav.classList.remove("locked");
+    l4Nav.querySelector(".nav-icon").textContent = "4";
   }
 
   updateHintButtonsUI();
@@ -155,6 +206,7 @@ function renderSubtaskState() {
   });
   renderTask2CheckState();
   renderTask3CheckState();
+  renderTask4DecodeState();
 }
 
 function setSubtaskFeedback(level, key, ok, msg) {
@@ -281,6 +333,7 @@ function renderGateStates() {
     const level = Number(section.id.split("-")[1]);
     if (level) renderGateState(level);
   });
+  renderTask4GateState();
 }
 
 function renderTask2CheckState() {
@@ -376,10 +429,10 @@ function updateTask3StackDiagram() {
   });
 
   const laneStates = {
-    top: state.subtasks[3].a || state.subtasks[3].b || state.subtasks[3].c,
-    left: state.subtasks[3].a,
-    center: state.subtasks[3].b,
-    right: state.subtasks[3].c,
+    top: state.subtasks[3].a,
+    left: state.subtasks[3].b,
+    center: state.subtasks[3].c,
+    right: prerequisitesReady,
     bottom: prerequisitesReady,
     output: state.subtasks[3].d,
   };
@@ -435,6 +488,338 @@ function renderTask3CompletionState() {
   } else if (nextBtn) {
     nextBtn.classList.add("hidden");
   }
+}
+
+function setDecodeFeedback(index, ok, msg) {
+  const el = document.getElementById(`decodeFeedback4${index}`);
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = ok ? "#3fb950" : msg ? "#f0c66e" : "";
+}
+
+function getTask4DecodedCount() {
+  return Object.values(state.task4.decoded).filter(Boolean).length;
+}
+
+function renderTask4GateState() {
+  const open = !!state.gates[4];
+  const content = document.getElementById("task4UnlockedContent");
+  const input = document.getElementById("gateInput4");
+  const button = document.querySelector('[data-check-gate-text="4"]');
+
+  if (content) content.classList.toggle("hidden", !open);
+  if (input) {
+    if (open) input.value = TASK4_GATE_ANSWER;
+    input.disabled = open;
+  }
+  if (button) button.disabled = open;
+
+  const feedback = document.getElementById("gateFeedback4");
+  if (open && feedback && !feedback.textContent.trim()) {
+    setGateFeedback(4, true, `Correct — ${TASK4_GATE_ANSWER} opens the gate.`);
+  }
+  if (open) updateTask4Graph();
+}
+
+function getTask4GraphData() {
+  const decodedNames = Object.entries(TASK4_DECODE_ANSWERS)
+    .filter(([key]) => state.task4.decoded[key])
+    .map(([, name]) => name);
+  const visibleIssues = TASK4_ISSUES.filter((issue) => decodedNames.includes(issue.assignee));
+  const nodes = new Map();
+  const links = new Map();
+
+  const addNode = (id, data) => {
+    if (!nodes.has(id)) nodes.set(id, { id, ...data });
+  };
+  const addLink = (source, target) => {
+    const key = `${source}|${target}`;
+    if (!links.has(key)) links.set(key, { source, target });
+  };
+
+  visibleIssues.forEach((issue) => {
+    const personId = `person-${issue.assignee}`;
+    const issueId = `issue-${issue.id}`;
+    const locationId = `location-${issue.location}`;
+    const typeId = `type-${issue.type}`;
+
+    addNode(personId, { type: "person", label: issue.assignee, sublabel: "Assignee" });
+    addNode(issueId, { type: "issue", label: issue.id, sublabel: `${issue.confidence}%` });
+    addNode(locationId, { type: "location", label: issue.location, sublabel: "Location" });
+    addNode(typeId, { type: "issueType", label: issue.type, sublabel: "Issue type" });
+
+    addLink(personId, issueId);
+    addLink(issueId, locationId);
+    addLink(issueId, typeId);
+  });
+
+  return { nodes: [...nodes.values()], links: [...links.values()] };
+}
+
+function updateTask4Graph() {
+  const mount = document.getElementById("task4Graph");
+  if (!mount) return;
+
+  if (typeof d3 === "undefined") {
+    mount.innerHTML = '<div class="task4-graph-empty">Graph library is still loading. Try again in a moment.</div>';
+    return;
+  }
+
+  const { nodes, links } = getTask4GraphData();
+  if (!nodes.length) {
+    mount.innerHTML = '<div class="task4-graph-empty">Decode a name to reveal the first part of the network.</div>';
+    return;
+  }
+
+  const width = Math.max(mount.clientWidth || 0, 720);
+  const height = 500;
+  mount.innerHTML = "";
+
+  const grouped = d3.group(nodes, (d) => d.type);
+  grouped.forEach((list) => {
+    list.sort((a, b) => a.label.localeCompare(b.label)).forEach((n, index) => {
+      n.order = index;
+      n.total = list.length;
+    });
+  });
+
+  const targetX = {
+    person: width * 0.18,
+    issue: width * 0.45,
+    location: width * 0.72,
+    issueType: width * 0.88,
+  };
+  const nodeRadius = (d) => {
+    if (d.type === "issue") return 18;
+    if (d.type === "issueType") return 22;
+    return 28;
+  };
+  const targetY = (d) => {
+    const total = Math.max(d.total || 1, 1);
+    return 70 + ((d.order + 1) * (height - 140)) / (total + 1);
+  };
+
+  const svg = d3.select(mount)
+    .append("svg")
+    .attr("viewBox", `0 0 ${width} ${height}`)
+    .attr("preserveAspectRatio", "xMidYMid meet")
+    .style("cursor", "grab");
+
+  // zoom hint overlay
+  const hintEl = document.createElement("div");
+  hintEl.className = "task4-graph-hint";
+  hintEl.textContent = "Scroll to zoom · Click a node to highlight · Click background to reset";
+  mount.appendChild(hintEl);
+
+  const container = svg.append("g").attr("class", "task4-graph-container");
+
+  // zoom behaviour
+  const zoom = d3.zoom()
+    .scaleExtent([0.3, 4])
+    .on("zoom", (event) => {
+      container.attr("transform", event.transform);
+      svg.style("cursor", event.transform.k !== 1 ? "grabbing" : "grab");
+    });
+  svg.call(zoom);
+
+  const link = container.append("g")
+    .selectAll("line")
+    .data(links)
+    .join("line")
+    .attr("class", "task4-link")
+    .attr("stroke", "rgba(92, 214, 135, 0.35)")
+    .attr("stroke-width", 1.6);
+
+  const node = container.append("g")
+    .selectAll("g")
+    .data(nodes, (d) => d.id)
+    .join((enter) => {
+      const g = enter.append("g").attr("class", (d) => `task4-node task4-node-${d.type}`);
+      g.append("circle");
+      g.append("text").attr("class", "task4-node-label").attr("text-anchor", "middle");
+      g.append("text").attr("class", "task4-node-sub").attr("text-anchor", "middle");
+      return g;
+    });
+
+  node.select("circle")
+    .attr("r", (d) => nodeRadius(d))
+    .attr("fill", (d) => {
+      if (d.type === "person") return "#123c24";
+      if (d.type === "issue") return "#173042";
+      if (d.type === "location") return "#16394d";
+      return "#334015";
+    })
+    .attr("stroke", (d) => {
+      if (d.type === "person") return "#5be37d";
+      if (d.type === "issue") return "#7fd2ff";
+      if (d.type === "location") return "#8fd7ff";
+      return "#d9ef7a";
+    })
+    .attr("stroke-width", 1.8)
+    .style("cursor", "pointer");
+
+  node.select(".task4-node-label")
+    .attr("dy", (d) => nodeRadius(d) + 15)
+    .attr("fill", "#dbe8f4")
+    .attr("font-size", 11)
+    .attr("font-weight", 700)
+    .text((d) => d.label);
+
+  node.select(".task4-node-sub")
+    .attr("dy", (d) => nodeRadius(d) + 29)
+    .attr("fill", "#8fa5b8")
+    .attr("font-size", 10)
+    .text((d) => d.sublabel);
+
+  // click on a node — highlight its direct connections
+  node.on("click", (event, d) => {
+    event.stopPropagation();
+    const connectedNodeIds = new Set([d.id]);
+    links.forEach((l) => {
+      const srcId = typeof l.source === "object" ? l.source.id : l.source;
+      const tgtId = typeof l.target === "object" ? l.target.id : l.target;
+      if (srcId === d.id) connectedNodeIds.add(tgtId);
+      if (tgtId === d.id) connectedNodeIds.add(srcId);
+    });
+
+    node.classed("task4-node-dimmed", (n) => !connectedNodeIds.has(n.id));
+    node.classed("task4-node-highlighted", (n) => n.id === d.id);
+    link.classed("task4-link-dimmed", (l) => {
+      const srcId = typeof l.source === "object" ? l.source.id : l.source;
+      const tgtId = typeof l.target === "object" ? l.target.id : l.target;
+      return srcId !== d.id && tgtId !== d.id;
+    });
+    link.classed("task4-link-highlighted", (l) => {
+      const srcId = typeof l.source === "object" ? l.source.id : l.source;
+      const tgtId = typeof l.target === "object" ? l.target.id : l.target;
+      return srcId === d.id || tgtId === d.id;
+    });
+  });
+
+  // click on svg background — reset highlight
+  svg.on("click", () => {
+    node.classed("task4-node-dimmed", false).classed("task4-node-highlighted", false);
+    link.classed("task4-link-dimmed", false).classed("task4-link-highlighted", false);
+  });
+
+  const simulation = d3.forceSimulation(nodes)
+    .force("link", d3.forceLink(links).id((d) => d.id).distance(100).strength(0.82))
+    .force("charge", d3.forceManyBody().strength(-300))
+    .force("collide", d3.forceCollide().radius((d) => nodeRadius(d) + 24))
+    .force("x", d3.forceX((d) => targetX[d.type]).strength(0.34))
+    .force("y", d3.forceY((d) => targetY(d)).strength(0.24))
+    .on("tick", () => {
+      link
+        .attr("x1", (d) => d.source.x)
+        .attr("y1", (d) => d.source.y)
+        .attr("x2", (d) => d.target.x)
+        .attr("y2", (d) => d.target.y);
+
+      node.attr("transform", (d) => `translate(${d.x},${d.y})`);
+    });
+
+  window.setTimeout(() => simulation.stop(), 1400);
+}
+
+function renderTask4DecodeState() {
+  Object.entries(TASK4_DECODE_ANSWERS).forEach(([key, answer]) => {
+    const input = document.getElementById(`l4Decode${key}`);
+    const card = input?.closest(".decode-card");
+    if (!input || !card) return;
+
+    if (state.task4.decoded[key]) {
+      input.value = answer;
+      input.disabled = true;
+      card.classList.add("is-decoded");
+      setDecodeFeedback(key, true, "Decoded");
+    } else {
+      input.disabled = false;
+      card.classList.remove("is-decoded");
+      if (!input.value.trim()) setDecodeFeedback(key, false, "");
+    }
+  });
+
+  const counter = document.getElementById("decodeCounter4");
+  if (counter) counter.textContent = `Decoded names: ${getTask4DecodedCount()} / 6`;
+
+  updateTask4Graph();
+  renderTask4CompletionState();
+}
+
+function handleTask4DecodeInput(index) {
+  if (state.task4.decoded[index]) return;
+  const input = document.getElementById(`l4Decode${index}`);
+  if (!input) return;
+
+  const answer = TASK4_DECODE_ANSWERS[index];
+  const normalized = normalizeNameToken(input.value);
+  if (!input.value.trim()) {
+    setDecodeFeedback(index, false, "");
+    return;
+  }
+
+  if (normalized === answer) {
+    state.task4.decoded[index] = true;
+    input.value = answer;
+    saveProgress();
+    renderTask4DecodeState();
+    return;
+  }
+
+  setDecodeFeedback(index, false, "Keep decoding");
+}
+
+function renderTask4CompletionState() {
+  const nextBtn = document.getElementById("nextTask4");
+  const answer = document.getElementById("answer4");
+
+  if (state.solved[4]) {
+    if (answer) answer.value = "34";
+    setFeedback(4, true, "Correct — the breach points to Viktor, and the entry-point confidence score is 34.");
+    if (nextBtn) nextBtn.classList.remove("hidden");
+  } else if (nextBtn) {
+    nextBtn.classList.add("hidden");
+  }
+}
+
+function checkTask4Gate() {
+  if (state.gates[4]) return;
+  const input = document.getElementById("gateInput4");
+  const value = normalize(input?.value || "");
+  if (value === "A-2" || value === "A2") {
+    state.gates[4] = true;
+    setGateFeedback(4, true, `Correct — ${TASK4_GATE_ANSWER} opens the gate.`);
+    renderTask4GateState();
+    renderTask4DecodeState();
+    saveProgress();
+    return;
+  }
+  setGateFeedback(4, false, "That feed label does not open the gate. Recheck the blue helmet clue.");
+}
+
+function checkTask4Final() {
+  if (!state.gates[4]) {
+    setFeedback(4, false, "Solve the gate riddle first.");
+    return;
+  }
+  if (getTask4DecodedCount() < 6) {
+    setFeedback(4, false, "Decode all six names first so the network is fully visible.");
+    return;
+  }
+
+  const answer = document.getElementById("answer4")?.value.trim() || "";
+  if (!/^\d+$/.test(answer)) {
+    setFeedback(4, false, "Enter the confidence score using digits only.");
+    return;
+  }
+
+  if (Number(answer) === 34) {
+    unlockLevel(4);
+    renderTask4CompletionState();
+    return;
+  }
+
+  setFeedback(4, false, "Not correct yet. Recheck the 02:47 issue and the sealed-room clue.");
 }
 
 function checkTask3RoomAudit() {
@@ -556,6 +941,13 @@ function unlockLevel(level) {
     if (nav) {
       nav.classList.remove("locked");
       nav.querySelector(".nav-icon").textContent = "3";
+    }
+  }
+  if (level === 3) {
+    const nav = document.querySelector('.nav-item[data-target="level-4"]');
+    if (nav) {
+      nav.classList.remove("locked");
+      nav.querySelector(".nav-icon").textContent = "4";
     }
   }
   updateStatsUI();
@@ -807,6 +1199,11 @@ function attachEvents() {
       tryGate(Number(btn.dataset.gateLevel), Number(btn.dataset.gateRoom));
     });
   });
+  document.querySelectorAll("[data-check-gate-text]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      if (Number(btn.dataset.checkGateText) === 4) checkTask4Gate();
+    });
+  });
 
   // Task 2 room choices
   document.querySelectorAll("[data-choice-subtask]").forEach((btn) => {
@@ -834,19 +1231,28 @@ function attachEvents() {
   document.querySelectorAll("[data-check-room-audit]").forEach((btn) => {
     btn.addEventListener("click", () => checkTask3RoomAudit());
   });
+  document.querySelectorAll("[data-check-task4-answer]").forEach((btn) => {
+    btn.addEventListener("click", () => checkTask4Final());
+  });
+  Object.keys(TASK4_DECODE_ANSWERS).forEach((key) => {
+    const input = document.getElementById(`l4Decode${key}`);
+    if (!input) return;
+    input.addEventListener("input", () => handleTask4DecodeInput(key));
+    input.addEventListener("change", () => handleTask4DecodeInput(key));
+  });
 
   // Mobile menu toggle
   document.getElementById("menuToggle").addEventListener("click", () => {
     document.getElementById("sidebar").classList.toggle("open");
   });
 
-  // Lightbox (floor plan expand)
-  const lightbox = document.getElementById("lightbox");
-  const thumb = document.getElementById("floorplanThumb");
-  const lbClose = document.getElementById("lightboxClose");
-  if (thumb && lightbox) {
+  const bindLightbox = (thumbId, lightboxId, closeId) => {
+    const lightbox = document.getElementById(lightboxId);
+    const thumb = document.getElementById(thumbId);
+    const close = document.getElementById(closeId);
+    if (!thumb || !lightbox || !close) return;
     thumb.addEventListener("click", () => lightbox.classList.remove("hidden"));
-    lbClose.addEventListener("click", () => lightbox.classList.add("hidden"));
+    close.addEventListener("click", () => lightbox.classList.add("hidden"));
     lightbox.addEventListener("click", (e) => {
       if (e.target === lightbox) lightbox.classList.add("hidden");
     });
@@ -855,7 +1261,10 @@ function attachEvents() {
         lightbox.classList.add("hidden");
       }
     });
-  }
+  };
+  bindLightbox("floorplanThumb", "lightbox", "lightboxClose");
+  bindLightbox("site2ThumbGate", "site2LightboxGate", "site2LightboxGateClose");
+  bindLightbox("site2Thumb", "site2Lightbox", "site2LightboxClose");
 
   // Reset (requires admin code)
   document.getElementById("resetProgressBtn").addEventListener("click", () => {
@@ -884,9 +1293,24 @@ function attachEvents() {
       const nextBtn = document.getElementById(`nextTask${l}`);
       if (nextBtn) nextBtn.classList.add("hidden");
     });
-    ["l1Sub1", "l1Sub2", "l2Sub1", "l2Sub2", "l2Sub3", "l2Sub4", "l3Sub1", "l3Sub2", "l3Sub3", "agentPrompt3", "l3Room5", "l3Room8", "l3Room11", "l3Room14"].forEach((id) => {
+    ["hint4", "feedback4"].forEach((id) => {
       const el = document.getElementById(id);
-      if (el) el.value = "";
+      if (!el) return;
+      if (id.startsWith("hint")) el.classList.add("hidden");
+      else {
+        el.classList.remove("ok", "bad");
+        el.textContent = "";
+      }
+    });
+    const nextTask4 = document.getElementById("nextTask4");
+    if (nextTask4) nextTask4.classList.add("hidden");
+
+    ["l1Sub1", "l1Sub2", "l2Sub1", "l2Sub2", "l2Sub3", "l2Sub4", "l3Sub1", "l3Sub2", "l3Sub3", "agentPrompt3", "l3Room5", "l3Room8", "l3Room11", "l3Room14", "gateInput4", "answer4", "l4Decode1", "l4Decode2", "l4Decode3", "l4Decode4", "l4Decode5", "l4Decode6"].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.value = "";
+        el.disabled = false;
+      }
     });
     ["pyOut3", "agentConsoleOut3"].forEach((id) => {
       const el = document.getElementById(id);
@@ -901,10 +1325,22 @@ function attachEvents() {
     document.querySelectorAll('[data-gate-level="2"]').forEach((btn) => {
       btn.classList.remove("is-correct", "is-wrong");
     });
+    const gateFeedback4 = document.getElementById("gateFeedback4");
+    if (gateFeedback4) {
+      gateFeedback4.classList.remove("ok", "bad");
+      gateFeedback4.textContent = "";
+    }
     document.querySelectorAll('[data-choice-subtask="2b"]').forEach((btn) => {
       btn.classList.remove("is-correct", "is-wrong");
       btn.disabled = false;
     });
+    Object.keys(TASK4_DECODE_ANSWERS).forEach((key) => {
+      setDecodeFeedback(key, false, "");
+      const card = document.getElementById(`l4Decode${key}`)?.closest(".decode-card");
+      if (card) card.classList.remove("is-decoded");
+    });
+    const graph = document.getElementById("task4Graph");
+    if (graph) graph.innerHTML = "";
 
     const l2Nav = document.querySelector('.nav-item[data-target="level-2"]');
     l2Nav.classList.add("locked");
@@ -913,6 +1349,11 @@ function attachEvents() {
     if (l3Nav) {
       l3Nav.classList.add("locked");
       l3Nav.querySelector(".nav-icon").textContent = "3";
+    }
+    const l4Nav = document.querySelector('.nav-item[data-target="level-4"]');
+    if (l4Nav) {
+      l4Nav.classList.add("locked");
+      l4Nav.querySelector(".nav-icon").textContent = "4";
     }
 
     renderSubtaskState();
@@ -931,7 +1372,8 @@ function init() {
   updateStatsUI();
   attachEvents();
 
-  if (state.solved[3]) showSection("level-3");
+  if (state.solved[4]) showSection("level-4");
+  else if (state.solved[3]) showSection("level-3");
   else if (state.solved[2]) showSection("level-2");
   else if (state.solved[1]) showSection("level-1");
   else showSection("start");

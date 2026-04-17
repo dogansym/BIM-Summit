@@ -8,6 +8,7 @@
   <meta name="description" content="Interactive AECO AI workshop challenges" />
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js" defer></script>
+  <script src="https://d3js.org/d3.v7.min.js" defer></script>
 </head>
 <body>
 <!-- ─── mobile hamburger ─── -->
@@ -32,9 +33,12 @@
       <button class="nav-item locked" data-target="level-3">
         <span class="nav-icon nav-locked-icon">3</span> Build the Cost Agent
       </button>
+      <button class="nav-item locked" data-target="level-4">
+        <span class="nav-icon nav-locked-icon">4</span> The Breach
+      </button>
     </nav>
     <div class="sidebar-score">
-      <div class="score-row"><span>Progress</span><strong id="progressText">0 / 3</strong></div>
+      <div class="score-row"><span>Progress</span><strong id="progressText">0 / 4</strong></div>
       <div class="score-row"><span>Score</span><strong id="scoreText">0</strong></div>
     </div>
     <button id="resetProgressBtn" class="btn btn-ghost btn-sm">Reset progress</button>
@@ -677,10 +681,12 @@ approved_budget = {
         </div>
 
         <div class="task-section">
-          <p class="section-kicker">Visual Reference</p>
-          <h3>Unlock the stack nodes</h3>
-          <p class="section-note">Each solved box unlocks one more node and pushes the workflow closer to the live Python audit.</p>
+          <p class="section-kicker">Agent Stack Map</p>
+          <h3>The Agent Protocol Stack</h3>
+          <p class="section-note">Each solved box lights up one module and routes another signal into the live Cost Agent.</p>
           <div class="stack-diagram" aria-label="Diagram of the Agent Protocol Stack">
+            <div class="stack-orb stack-orb-left" aria-hidden="true"></div>
+            <div class="stack-orb stack-orb-core" aria-hidden="true"></div>
             <div class="stack-lane lane-top" data-stack-lane="top" aria-hidden="true"></div>
             <div class="stack-lane lane-drop-left" data-stack-lane="left" aria-hidden="true"></div>
             <div class="stack-lane lane-drop-center" data-stack-lane="center" aria-hidden="true"></div>
@@ -689,37 +695,93 @@ approved_budget = {
             <div class="stack-lane lane-output" data-stack-lane="output" aria-hidden="true"></div>
 
             <article class="stack-node" data-stack-node="3a">
-              <p class="stack-node-kicker">Box 1</p>
-              <h4>The Path</h4>
-              <p>Letter clue unlocks the contractor quote dataset.</p>
+              <div class="stack-node-head">
+                <span class="stack-node-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M4 17.5L9 12.5L12.5 16L19.5 7" />
+                    <path d="M16.5 7H19.5V10" />
+                    <circle cx="4.5" cy="17.5" r="1.5" />
+                    <circle cx="9" cy="12.5" r="1.5" />
+                    <circle cx="12.5" cy="16" r="1.5" />
+                  </svg>
+                </span>
+                <div>
+                  <p class="stack-node-kicker">Box 1</p>
+                  <h4>The Path</h4>
+                </div>
+              </div>
+              <p class="stack-node-copy">Unlocks contractor quotes.</p>
               <span class="stack-state" data-stack-state="3a">Locked</span>
             </article>
 
             <article class="stack-node" data-stack-node="3b">
-              <p class="stack-node-kicker">Box 2</p>
-              <h4>The Foundation</h4>
-              <p>Binary handshake unlocks the approved budget dataset.</p>
+              <div class="stack-node-head">
+                <span class="stack-node-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect x="7" y="7" width="10" height="10" rx="2" />
+                    <path d="M10 3.5V7M14 3.5V7M10 17V20.5M14 17V20.5M3.5 10H7M3.5 14H7M17 10H20.5M17 14H20.5" />
+                  </svg>
+                </span>
+                <div>
+                  <p class="stack-node-kicker">Box 2</p>
+                  <h4>The Foundation</h4>
+                </div>
+              </div>
+              <p class="stack-node-copy">Unlocks approved budget.</p>
               <span class="stack-state" data-stack-state="3b">Locked</span>
             </article>
 
             <article class="stack-node" data-stack-node="3c">
-              <p class="stack-node-kicker">Box 3</p>
-              <h4>Critical Leak</h4>
-              <p>Target room clue unlocks the final prompt-number.</p>
+              <div class="stack-node-head">
+                <span class="stack-node-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 4L20 18H4L12 4Z" />
+                    <path d="M12 9V13" />
+                    <circle cx="12" cy="16.5" r="0.9" fill="currentColor" stroke="none" />
+                  </svg>
+                </span>
+                <div>
+                  <p class="stack-node-kicker">Box 3</p>
+                  <h4>Critical Leak</h4>
+                </div>
+              </div>
+              <p class="stack-node-copy">Unlocks target prompt.</p>
               <span class="stack-state" data-stack-state="3c">Locked</span>
             </article>
 
             <article class="stack-node stack-node-run" data-stack-node="3run">
-              <p class="stack-node-kicker">Run Step</p>
-              <h4>Python Container</h4>
-              <p>Combine the unlocked data and run the Cost Agent logic.</p>
+              <div class="stack-node-head">
+                <span class="stack-node-icon stack-node-icon-core" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect x="7" y="8" width="10" height="8" rx="2.5" />
+                    <path d="M9.5 12H9.51M14.5 12H14.51" />
+                    <path d="M12 4.5V8M5.5 11.5H7M17 11.5H18.5M9.5 18.5H14.5" />
+                  </svg>
+                </span>
+                <div>
+                  <p class="stack-node-kicker">Run Step</p>
+                  <h4>Agent Core</h4>
+                </div>
+              </div>
+              <p class="stack-node-copy">Runs the Cost Agent logic.</p>
               <span class="stack-state" data-stack-state="3run">Waiting</span>
             </article>
 
             <article class="stack-node stack-node-goal" data-stack-node="3d">
-              <p class="stack-node-kicker">Final Output</p>
-              <h4>Agent Online</h4>
-              <p>Compile the agent successfully and unlock the live room prompt.</p>
+              <div class="stack-node-head">
+                <span class="stack-node-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect x="4.5" y="6.5" width="15" height="11" rx="2.5" />
+                    <path d="M9 19.5H15" />
+                    <path d="M9.5 11.5L11.5 13.5L15 10" />
+                  </svg>
+                </span>
+                <div>
+                  <p class="stack-node-kicker">Final Output</p>
+                  <h4>Live Prompt</h4>
+                </div>
+              </div>
+              <p class="stack-node-copy">Unlocks the live prompt.</p>
               <span class="stack-state" data-stack-state="3d">Locked</span>
             </article>
           </div>
@@ -767,7 +829,239 @@ approved_budget = {
           </div>
           <p id="hint3" class="hint hidden"></p>
           <p id="feedback3" class="feedback"></p>
-          <button id="nextTask3" class="btn btn-primary btn-next hidden" data-next="start">Finish challenge →</button>
+          <button id="nextTask3" class="btn btn-primary btn-next hidden" data-next="level-4">Go to next task →</button>
+        </div>
+      </div>
+    </section>
+    <!-- ── TASK 4 ── -->
+    <section id="level-4" class="view hidden" aria-live="polite" data-time-without-ai="18-30 min." data-time-with-ai="8-12 min.">
+      <div class="card">
+        <div class="task-head">
+          <div class="task-head-copy">
+            <h2>Task 4 · The Breach</h2>
+          </div>
+          <div class="task-head-side">
+            <div class="task-estimate" hidden></div>
+            <span class="pill">+10 pts</span>
+          </div>
+        </div>
+        <div class="task-intro">
+          <p class="scenario">
+            Symetri has deployed a YOLO-based AI monitoring system across the hotel renovation site. Six cameras cover the entire project — ground level, rooftop, and indoor spaces.
+          </p>
+          <p class="scenario">
+            The system detects safety violations, access breaches, and hazards in real time — and automatically creates issues in Autodesk Forma, assigns them to the responsible person, and sends notifications. It worked. Until it didn't.
+          </p>
+          <p class="task-reminder"><strong>Remember:</strong> Split the decoding across the group and let one person watch the graph.</p>
+        </div>
+
+        <div class="task-section">
+          <p class="section-kicker">Source — Camera feeds</p>
+          <h3>Study the feeds before solving the riddle</h3>
+          <p class="section-note">Six cameras. Study the image carefully — the gate riddle below refers to it.</p>
+          <div class="img-frame img-frame-thumb task4-camera-thumb" id="site2ThumbGate">
+            <img src="assets/site2.png" alt="Composite camera feeds from the renovation site" loading="lazy" />
+            <span class="img-expand-label">Click to enlarge</span>
+          </div>
+          <div id="site2LightboxGate" class="lightbox hidden" role="dialog" aria-label="Enlarged camera feeds">
+            <button class="lightbox-close" id="site2LightboxGateClose" aria-label="Close">&times;</button>
+            <img src="assets/site2.png" alt="Composite camera feeds from the renovation site — enlarged" />
+          </div>
+        </div>
+
+        <div class="task-section gate-panel">
+          <p class="section-kicker">Gate Challenge</p>
+          <h3>🔐 GATE RIDDLE</h3>
+          <div class="gate-riddle">
+            <p>Six cameras watch the site each day, where golden helmets rule the fray.<br />But one lens caught a different hue — a single crown of colder blue.</p>
+            <p>Find the feed where it stands alone.<br />That label is the key to what's unknown.</p>
+          </div>
+          <div class="task-step subtask gate-text-check">
+            <label for="gateInput4">Which feed label opens the gate?</label>
+            <div class="row">
+              <input id="gateInput4" type="text" placeholder="Enter feed label" autocomplete="off" />
+              <button class="btn btn-primary" data-check-gate-text="4">Check gate</button>
+            </div>
+          </div>
+          <p id="gateFeedback4" class="feedback gate-feedback"></p>
+        </div>
+
+        <div id="task4UnlockedContent" class="hidden">
+          <div class="task-section">
+            <p class="section-kicker">Unlocked Brief</p>
+            <h3>The issue log is corrupted</h3>
+            <p class="scenario">
+              Three days ago, a hacker gained access to the Forma system. Every assignee name in the issue log has been encoded using an unknown cipher. The relationships are broken. Nobody knows who is responsible for what.
+            </p>
+            <p class="scenario">
+              But the logs are still there. And so is the pattern. Your mission: decode the issue list, rebuild the network — and find the insider.
+            </p>
+          </div>
+
+          <div class="task-section">
+            <p class="section-kicker">Source 1</p>
+            <h3>Camera feeds</h3>
+            <p class="section-note">Six cameras. Ten detections. Study the feeds and the issue log together.</p>
+            <div class="img-frame img-frame-thumb task4-camera-thumb" id="site2Thumb">
+              <img src="assets/site2.png" alt="Composite camera feeds from the renovation site" loading="lazy" />
+              <span class="img-expand-label">Click to enlarge</span>
+            </div>
+            <div id="site2Lightbox" class="lightbox hidden" role="dialog" aria-label="Enlarged camera feeds">
+              <button class="lightbox-close" id="site2LightboxClose" aria-label="Close">&times;</button>
+              <img src="assets/site2.png" alt="Composite camera feeds from the renovation site — enlarged" />
+            </div>
+            <div class="table-viewer">
+              <table class="data-table task4-feed-table">
+                <thead>
+                  <tr>
+                    <th>Camera</th>
+                    <th>Feed</th>
+                    <th>Covers</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>CAM-A</td>
+                    <td>a-2</td>
+                    <td>Exterior grounds + indoor workshop</td>
+                  </tr>
+                  <tr>
+                    <td>CAM-B</td>
+                    <td>b-1, b-2</td>
+                    <td>Aerial courtyard + rooftop</td>
+                  </tr>
+                  <tr>
+                    <td>CAM-C</td>
+                    <td>c-1, c-2</td>
+                    <td>Entrance corridor + construction yard</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="task-section">
+            <p class="section-kicker">Source 2</p>
+            <h3>Issue log (Autodesk Forma — corrupted)</h3>
+            <div class="table-viewer">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Issue</th>
+                    <th>Time</th>
+                    <th>Camera</th>
+                    <th>Location</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Assignee (encoded)</th>
+                    <th>Confidence</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>IFS-001</td><td>08:14</td><td>CAM-A · a-2</td><td>Workshop</td><td>Safety · PPE</td><td>Worker without helmet near active lifting zone</td><td><code>...- / .. / -.- / - / --- / .-.</code></td><td>94%</td></tr>
+                  <tr><td>IFS-002</td><td>09:33</td><td>CAM-B · b-1</td><td>Courtyard</td><td>Access</td><td>Unauthorized personnel in crane exclusion zone</td><td><code>-- / .- / .-. / -.-. / ..- / ...</code></td><td>87%</td></tr>
+                  <tr><td>IFS-003</td><td>10:07</td><td>CAM-C · c-1</td><td>Entrance corridor</td><td>Safety · PPE</td><td>Person detected without safety vest</td><td><code>.-.. / . / -. / .-</code></td><td>91%</td></tr>
+                  <tr><td>IFS-004</td><td>10:45</td><td>CAM-A · a-2</td><td>Exterior grounds</td><td>Hazard</td><td>Unsecured materials near scaffold</td><td><code>--- / -- / .- / .-.</code></td><td>68%</td></tr>
+                  <tr><td>IFS-005</td><td>11:22</td><td>CAM-B · b-2</td><td>Rooftop</td><td>Fire</td><td>Unattended equipment near combustible materials</td><td><code>-.-- / ..- / -.- / ..</code></td><td>82%</td></tr>
+                  <tr><td>IFS-006</td><td>12:58</td><td>CAM-C · c-1</td><td>Main Entrance</td><td>Safety · PPE</td><td>Two workers detected without helmets</td><td><code>...- / .. / -.- / - / --- / .-.</code></td><td>96%</td></tr>
+                  <tr><td>IFS-007</td><td>13:30</td><td>CAM-B · b-1</td><td>Courtyard</td><td>Access</td><td>Zone overcrowding — 8 workers, limit is 4</td><td><code>... / .- / .-. / .-</code></td><td>89%</td></tr>
+                  <tr><td>IFS-008</td><td>14:15</td><td>CAM-C · c-2</td><td>Construction yard</td><td>Safety · PPE</td><td>Worker near machinery without PPE</td><td><code>-- / .- / .-. / -.-. / ..- / ...</code></td><td>65%</td></tr>
+                  <tr><td>IFS-009</td><td>02:47</td><td>CAM-C · c-1</td><td>Kitchen</td><td>Hazard</td><td>Smoke detected near kitchen area</td><td><code>...- / .. / -.- / - / --- / .-.</code></td><td>34%</td></tr>
+                  <tr><td>IFS-010</td><td>15:03</td><td>CAM-B · b-2</td><td>Rooftop</td><td>Structural</td><td>Crack progression detected near canopy beam</td><td><code>-.-- / ..- / -.- / ..</code></td><td>91%</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="task-section">
+            <p class="section-kicker">Source 3</p>
+            <h3>Morse Code reference</h3>
+            <div class="morse-reference">
+              <code>A .-</code><code>B -...</code><code>C -.-.</code><code>D -..</code><code>E .</code>
+              <code>F ..-.</code><code>G --.</code><code>H ....</code><code>I ..</code><code>J .---</code>
+              <code>K -.-</code><code>L .-..</code><code>M --</code><code>N -.</code><code>O ---</code>
+              <code>P .--.</code><code>Q --.-</code><code>R .-.</code><code>S ...</code><code>T -</code>
+              <code>U ..-</code><code>V ...-</code><code>W .--</code><code>X -..-</code><code>Y -.--</code>
+              <code>Z --..</code>
+            </div>
+            <p class="section-note">Each <code>/</code> separates a letter. Decode letter by letter.</p>
+          </div>
+
+          <div class="task-section">
+            <p class="section-kicker">Step 1</p>
+            <h3>Decode the names</h3>
+            <p class="section-note">Type the decoded assignee names. Correct entries lock in automatically and reveal more of the network.</p>
+            <p id="decodeCounter4" class="guide">Decoded names: 0 / 6</p>
+            <div class="decode-grid">
+              <label class="decode-card" for="l4Decode1">
+                <span class="decode-code"><code>...- / .. / -.- / - / --- / .-.</code></span>
+                <input id="l4Decode1" type="text" placeholder="Decode the name" autocomplete="off" />
+                <span id="decodeFeedback41" class="sub-feedback"></span>
+              </label>
+              <label class="decode-card" for="l4Decode2">
+                <span class="decode-code"><code>-- / .- / .-. / -.-. / ..- / ...</code></span>
+                <input id="l4Decode2" type="text" placeholder="Decode the name" autocomplete="off" />
+                <span id="decodeFeedback42" class="sub-feedback"></span>
+              </label>
+              <label class="decode-card" for="l4Decode3">
+                <span class="decode-code"><code>.-.. / . / -. / .-</code></span>
+                <input id="l4Decode3" type="text" placeholder="Decode the name" autocomplete="off" />
+                <span id="decodeFeedback43" class="sub-feedback"></span>
+              </label>
+              <label class="decode-card" for="l4Decode4">
+                <span class="decode-code"><code>--- / -- / .- / .-.</code></span>
+                <input id="l4Decode4" type="text" placeholder="Decode the name" autocomplete="off" />
+                <span id="decodeFeedback44" class="sub-feedback"></span>
+              </label>
+              <label class="decode-card" for="l4Decode5">
+                <span class="decode-code"><code>-.-- / ..- / -.- / ..</code></span>
+                <input id="l4Decode5" type="text" placeholder="Decode the name" autocomplete="off" />
+                <span id="decodeFeedback45" class="sub-feedback"></span>
+              </label>
+              <label class="decode-card" for="l4Decode6">
+                <span class="decode-code"><code>... / .- / .-. / .-</code></span>
+                <input id="l4Decode6" type="text" placeholder="Decode the name" autocomplete="off" />
+                <span id="decodeFeedback46" class="sub-feedback"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="task-section">
+            <p class="section-kicker">Step 2</p>
+            <h3>Build the network</h3>
+            <p class="section-note">As each name is decoded, the graph reveals their issue links, locations, and issue types.</p>
+            <div class="graph-panel">
+              <div class="graph-meta">
+                <strong>Issue relationship graph</strong>
+                <span>Reveal the network node by node.</span>
+              </div>
+              <div id="task4Graph" class="task4-graph" aria-label="Issue relationship graph"></div>
+            </div>
+          </div>
+
+          <div class="task-section">
+            <p class="section-kicker">Step 3</p>
+            <h3>Find the insider</h3>
+            <p class="section-note">Use the graph and the issue log to answer the breach riddle.</p>
+            <ul class="task-outline">
+              <li>Who is assigned to issues in two locations that were sealed after Mission 1?</li>
+              <li>Who appears in an issue logged at 02:47 with only 34% confidence?</li>
+              <li>What does a false alarm at that hour — in a sealed room — actually mean?</li>
+            </ul>
+            <div class="task-step subtask">
+              <label for="answer4">Unlock code</label>
+              <div class="row">
+                <input id="answer4" type="text" placeholder="Enter the confidence score" autocomplete="off" />
+                <button class="btn btn-primary" data-check-task4-answer="4">Unlock →</button>
+              </div>
+            </div>
+            <div class="actions">
+              <button class="btn btn-sm btn-hint hint-btn" data-level="4">Hint (−3 pts)</button>
+            </div>
+            <p id="hint4" class="hint hidden"></p>
+            <p id="feedback4" class="feedback"></p>
+            <button id="nextTask4" class="btn btn-primary btn-next hidden" data-next="start">Finish challenge →</button>
+          </div>
         </div>
       </div>
     </section>
@@ -853,8 +1147,18 @@ approved_budget = {
         intelligence in seconds.
       </p>
     </div>
+    <div class="fact fact-ai" data-for="level-4">
+      <h3>AI Fact</h3>
+      <p><strong>Computer vision gets dramatically more useful when detections are linked into a graph of people, places, and incidents.</strong></p>
+      <p>
+        A monitoring model can flag helmets, hazards, and breaches in seconds. A connected issue graph then shows who keeps appearing, where, and under what conditions.
+      </p>
+      <p>
+        When metadata gets corrupted, graph reconstruction is often the fastest way to surface the suspicious pattern again.
+      </p>
+    </div>
   </aside>
 </div>
-<script src="app.js"></script>
+<script src="app.js" defer></script>
 </body> 
 </html>
