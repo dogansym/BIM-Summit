@@ -884,6 +884,13 @@ function tryGate(level, room) {
   setGateFeedback(level, false, "That room does not open the gate. Read the riddle again.");
 }
 
+/* ─── admin mode ─── */
+function activateAdminMode() {
+  sessionStorage.setItem("symetri_admin", "1");
+  const btn = document.getElementById("sourceNavItem");
+  if (btn) btn.hidden = false;
+}
+
 /* ─── admin skip ─── */
 function skipToLevel(level) {
   // Unlock all levels before the target
@@ -1200,6 +1207,7 @@ function attachEvents() {
   document.querySelectorAll(".nav-item").forEach((btn) => {
     btn.addEventListener("click", () => {
       if (btn.classList.contains("locked")) return;
+      if (btn.dataset.target === "source") { window.location.href = "./source/"; return; }
       showSection(btn.dataset.target);
     });
   });
@@ -1299,6 +1307,7 @@ function attachEvents() {
   document.getElementById("skipTaskBtn").addEventListener("click", () => {
     const code = prompt("Enter admin code:");
     if (code !== "symadmin") return;
+    activateAdminMode();
     const raw = prompt("Jump to task (1 – 4):");
     const level = Number(raw);
     if (!level || level < 1 || level > 4) return;
@@ -1309,6 +1318,7 @@ function attachEvents() {
   document.getElementById("resetProgressBtn").addEventListener("click", () => {
     const code = prompt("Enter admin code to reset progress:");
     if (code !== "symadmin") return;
+    activateAdminMode();
 
     resetState();
     localStorage.removeItem(STORAGE_KEY);
@@ -1405,6 +1415,7 @@ function attachEvents() {
 /* ─── init ─── */
 function init() {
   loadProgress();
+  if (sessionStorage.getItem("symetri_admin") === "1") activateAdminMode();
   renderTaskEstimates();
   renderSubtaskState();
   renderGateStates();

@@ -1,3 +1,6 @@
+/* ─── base ─── */
+[hidden] { display: none !important; }
+
 /* ─── tokens — Symetri brand ─── */
 :root {
   --bg: #0d1117;
