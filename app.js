@@ -24,7 +24,7 @@ const hints = {
   1: "Try to find the critical rooms in the report",
   2: "Ask AI to answer all questions at once by uploading the excel sheet or copy/paste",
   3: "I am building a Cost Agent. I have provided the Contractor's Quotes and the Approved Budget for four rooms. Write a compact Python script that stores these two datasets, calculates the overcharge (Contractor - Approved) for each room, and allows a user to input a room number to see the specific overcharge for that room. If the room is not found, print 'No overcharge detected'.",
-  4: "Decode the assignees first. Then look for the person tied to both Kitchen and Main Entrance, and compare that with the 02:47 low-confidence log entry.",
+  4: "Decode the assignees first. Then identify the person connected to both Kitchen and Main Entrance and the 02:47 issue with 34% confidence.",
 };
 
 const TASK3_ROOM_OVERCHARGES = {
@@ -56,6 +56,8 @@ const TASK4_ISSUES = [
   { id: "IFS-010", location: "Rooftop", type: "Structural", assignee: "YUKI", confidence: 91 },
 ];
 
+let finalScoreAnimationFrame = 0;
+
 /* ─── helpers ─── */
 function normalize(v) {
   return (v || "").toUpperCase().replace(/\s+/g, "").replace(/_/g, "-");
@@ -71,6 +73,110 @@ function parseRoomNumbers(v) {
 
 function emptyTask4Decoded() {
   return { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false };
+}
+
+function getSolvedCount() {
+  return Number(state.solved[1]) + Number(state.solved[2]) + Number(state.solved[3]) + Number(state.solved[4]);
+}
+
+function getHintsUsedCount() {
+  return Number(state.hintsUsed[1]) + Number(state.hintsUsed[2]) + Number(state.hintsUsed[3]) + Number(state.hintsUsed[4]);
+}
+
+function getAwardTier(score) {
+  if (score >= 40) {
+    return {
+      key: "platinum",
+      label: "Platinum Trophy",
+      status: "Passed with distinction",
+      note: "Perfect score. Your team cleared every task without dropping a single point.",
+    };
+  }
+  if (score >= 34) {
+    return {
+      key: "gold",
+      label: "Gold Trophy",
+      status: "Passed with honors",
+      note: "Excellent finish. You solved the full workshop with a high score and strong momentum.",
+    };
+  }
+  return {
+    key: "silver",
+    label: "Completion Diploma",
+    status: "Passed",
+    note: "Workshop completed. Every task is solved and the team made it all the way through.",
+  };
+}
+
+function formatCertificateDate() {
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date());
+}
+
+function animateFinalScore(value) {
+  const scoreEl = document.getElementById("finalScoreValue");
+  if (!scoreEl) return;
+
+  if (finalScoreAnimationFrame) cancelAnimationFrame(finalScoreAnimationFrame);
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    scoreEl.textContent = String(value);
+    return;
+  }
+
+  const duration = 900;
+  const start = performance.now();
+  scoreEl.textContent = "0";
+
+  const tick = (now) => {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - ((1 - progress) * (1 - progress) * (1 - progress));
+    scoreEl.textContent = String(Math.round(value * eased));
+    if (progress < 1) finalScoreAnimationFrame = requestAnimationFrame(tick);
+  };
+
+  finalScoreAnimationFrame = requestAnimationFrame(tick);
+}
+
+function renderFinaleState({ animateScore = false } = {}) {
+  const finalView = document.getElementById("final");
+  if (!finalView) return;
+
+  const score = state.score;
+  const hintsUsed = getHintsUsedCount();
+  const awardTier = getAwardTier(score);
+
+  finalView.dataset.awardTier = awardTier.key;
+
+  const awardLabel = document.getElementById("finalAwardLabel");
+  if (awardLabel) awardLabel.textContent = awardTier.label;
+
+  const statusText = document.getElementById("finalStatusText");
+  if (statusText) statusText.textContent = awardTier.status;
+
+  const hintsEl = document.getElementById("finalHintsUsed");
+  if (hintsEl) hintsEl.textContent = String(hintsUsed);
+
+  const noteEl = document.getElementById("finalAwardNote");
+  if (noteEl) noteEl.textContent = awardTier.note;
+
+  const certAward = document.getElementById("certificateAward");
+  if (certAward) certAward.textContent = awardTier.label;
+
+  const certScore = document.getElementById("certificateScore");
+  if (certScore) certScore.textContent = `${score} / 40`;
+
+  const certDate = document.getElementById("certificateDate");
+  if (certDate) certDate.textContent = formatCertificateDate();
+
+  if (animateScore) animateFinalScore(score);
+  else {
+    const scoreEl = document.getElementById("finalScoreValue");
+    if (scoreEl) scoreEl.textContent = String(score);
+  }
 }
 
 /* ─── persistence ─── */
@@ -157,7 +263,7 @@ function loadProgress() {
 
 /* ─── UI updates ─── */
 function updateStatsUI() {
-  const solved = Number(state.solved[1]) + Number(state.solved[2]) + Number(state.solved[3]) + Number(state.solved[4]);
+  const solved = getSolvedCount();
   document.getElementById("progressText").textContent = `${solved} / 4`;
   document.getElementById("scoreText").textContent = String(state.score);
 
@@ -179,7 +285,11 @@ function updateStatsUI() {
     l4Nav.querySelector(".nav-icon").textContent = "4";
   }
 
+  const finalNav = document.getElementById("finalNavItem");
+  if (finalNav) finalNav.hidden = !state.solved[4];
+
   updateHintButtonsUI();
+  renderFinaleState();
 }
 
 function updateSubtaskUI(level, key) {
@@ -622,6 +732,32 @@ function updateTask4Graph() {
     });
   svg.call(zoom);
 
+  const fitGraphToView = ({ animated = false } = {}) => {
+    const graphBounds = container.node()?.getBBox();
+    if (!graphBounds || !Number.isFinite(graphBounds.width) || !Number.isFinite(graphBounds.height)) return;
+    if (graphBounds.width <= 0 || graphBounds.height <= 0) return;
+
+    const padding = 42;
+    const scale = Math.max(
+      0.3,
+      Math.min(
+        4,
+        Math.min(
+          (width - padding * 2) / graphBounds.width,
+          (height - padding * 2) / graphBounds.height,
+        ),
+      ),
+    );
+    const translateX = (width / 2) - (scale * (graphBounds.x + graphBounds.width / 2));
+    const translateY = (height / 2) - (scale * (graphBounds.y + graphBounds.height / 2));
+    const nextTransform = d3.zoomIdentity.translate(translateX, translateY).scale(scale);
+
+    svg
+      .transition()
+      .duration(animated ? 450 : 0)
+      .call(zoom.transform, nextTransform);
+  };
+
   const link = container.append("g")
     .selectAll("line")
     .data(links)
@@ -718,7 +854,10 @@ function updateTask4Graph() {
       node.attr("transform", (d) => `translate(${d.x},${d.y})`);
     });
 
-  window.setTimeout(() => simulation.stop(), 1400);
+  window.setTimeout(() => {
+    simulation.stop();
+    fitGraphToView({ animated: true });
+  }, 1400);
 }
 
 function renderTask4DecodeState() {
@@ -774,8 +913,8 @@ function renderTask4CompletionState() {
   const answer = document.getElementById("answer4");
 
   if (state.solved[4]) {
-    if (answer) answer.value = "34";
-    setFeedback(4, true, "Correct — the breach points to Viktor, and the entry-point confidence score is 34.");
+    if (answer) answer.value = "VIKTOR";
+    setFeedback(4, true, "Correct — Viktor is tied to both Main Entrance and Kitchen, including the 02:47 issue with 34% confidence.");
     if (nextBtn) nextBtn.classList.remove("hidden");
   } else if (nextBtn) {
     nextBtn.classList.add("hidden");
@@ -808,18 +947,19 @@ function checkTask4Final() {
   }
 
   const answer = document.getElementById("answer4")?.value.trim() || "";
-  if (!/^\d+$/.test(answer)) {
-    setFeedback(4, false, "Enter the confidence score using digits only.");
+  if (!answer) {
+    setFeedback(4, false, "Enter the insider's name.");
     return;
   }
 
-  if (Number(answer) === 34) {
+  if (normalizeNameToken(answer) === "VIKTOR") {
     unlockLevel(4);
     renderTask4CompletionState();
+    showSection("final");
     return;
   }
 
-  setFeedback(4, false, "Not correct yet. Recheck the 02:47 issue and the sealed-room clue.");
+  setFeedback(4, false, "Not correct yet. Recheck who is linked to both Kitchen and Main Entrance and the 02:47 issue with 34% confidence.");
 }
 
 function checkTask3RoomAudit() {
@@ -927,6 +1067,8 @@ function showSection(id) {
 
   // toggle right-panel fact boxes
   document.querySelectorAll(".fact").forEach((f) => f.classList.toggle("visible", f.dataset.for === id));
+
+  if (id === "final") renderFinaleState({ animateScore: true });
 
   // close mobile sidebar
   document.getElementById("sidebar").classList.remove("open");
@@ -1278,6 +1420,16 @@ function attachEvents() {
     input.addEventListener("change", () => handleTask4DecodeInput(key));
   });
 
+  const printCertificateBtn = document.getElementById("printCertificateBtn");
+  if (printCertificateBtn) {
+    printCertificateBtn.addEventListener("click", () => window.print());
+  }
+
+  const backToStartBtn = document.getElementById("backToStartBtn");
+  if (backToStartBtn) {
+    backToStartBtn.addEventListener("click", () => showSection("start"));
+  }
+
   // Mobile menu toggle
   document.getElementById("menuToggle").addEventListener("click", () => {
     document.getElementById("sidebar").classList.toggle("open");
@@ -1422,7 +1574,7 @@ function init() {
   updateStatsUI();
   attachEvents();
 
-  if (state.solved[4]) showSection("level-4");
+  if (state.solved[4]) showSection("final");
   else if (state.solved[3]) showSection("level-3");
   else if (state.solved[2]) showSection("level-2");
   else if (state.solved[1]) showSection("level-1");

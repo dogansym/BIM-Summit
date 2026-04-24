@@ -36,6 +36,9 @@
       <button class="nav-item locked" data-target="level-4">
         <span class="nav-icon nav-locked-icon">4</span> The Breach
       </button>
+      <button class="nav-item" data-target="final" id="finalNavItem" hidden>
+        <span class="nav-icon">★</span> Completion
+      </button>
       <button class="nav-item" data-target="source" id="sourceNavItem" hidden>
         <span class="nav-icon">◎</span> Source
       </button>
@@ -958,20 +961,20 @@ approved_budget = {
                     <th>Type</th>
                     <th>Description</th>
                     <th>Assignee (encoded)</th>
-                    <th>Confidence</th>
+                    <th class="task4-confidence-hidden" aria-hidden="true">Confidence</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr><td>IFS-001</td><td>08:14</td><td>CAM-A · a-2</td><td>Workshop</td><td>Safety · PPE</td><td>Worker without helmet near active lifting zone</td><td><code>...- / .. / -.- / - / --- / .-.</code></td><td>94%</td></tr>
-                  <tr><td>IFS-002</td><td>09:33</td><td>CAM-B · b-1</td><td>Courtyard</td><td>Access</td><td>Unauthorized personnel in crane exclusion zone</td><td><code>-- / .- / .-. / -.-. / ..- / ...</code></td><td>87%</td></tr>
-                  <tr><td>IFS-003</td><td>10:07</td><td>CAM-C · c-1</td><td>Entrance corridor</td><td>Safety · PPE</td><td>Person detected without safety vest</td><td><code>.-.. / . / -. / .-</code></td><td>91%</td></tr>
-                  <tr><td>IFS-004</td><td>10:45</td><td>CAM-A · a-2</td><td>Exterior grounds</td><td>Hazard</td><td>Unsecured materials near scaffold</td><td><code>--- / -- / .- / .-.</code></td><td>68%</td></tr>
-                  <tr><td>IFS-005</td><td>11:22</td><td>CAM-B · b-2</td><td>Rooftop</td><td>Fire</td><td>Unattended equipment near combustible materials</td><td><code>-.-- / ..- / -.- / ..</code></td><td>82%</td></tr>
-                  <tr><td>IFS-006</td><td>12:58</td><td>CAM-C · c-1</td><td>Main Entrance</td><td>Safety · PPE</td><td>Two workers detected without helmets</td><td><code>...- / .. / -.- / - / --- / .-.</code></td><td>96%</td></tr>
-                  <tr><td>IFS-007</td><td>13:30</td><td>CAM-B · b-1</td><td>Courtyard</td><td>Access</td><td>Zone overcrowding — 8 workers, limit is 4</td><td><code>... / .- / .-. / .-</code></td><td>89%</td></tr>
-                  <tr><td>IFS-008</td><td>14:15</td><td>CAM-C · c-2</td><td>Construction yard</td><td>Safety · PPE</td><td>Worker near machinery without PPE</td><td><code>-- / .- / .-. / -.-. / ..- / ...</code></td><td>65%</td></tr>
-                  <tr><td>IFS-009</td><td>02:47</td><td>CAM-C · c-1</td><td>Kitchen</td><td>Hazard</td><td>Smoke detected near kitchen area</td><td><code>...- / .. / -.- / - / --- / .-.</code></td><td>34%</td></tr>
-                  <tr><td>IFS-010</td><td>15:03</td><td>CAM-B · b-2</td><td>Rooftop</td><td>Structural</td><td>Crack progression detected near canopy beam</td><td><code>-.-- / ..- / -.- / ..</code></td><td>91%</td></tr>
+                  <tr><td>IFS-001</td><td>08:14</td><td>CAM-A · a-2</td><td>Workshop</td><td>Safety · PPE</td><td>Worker without helmet near active lifting zone</td><td><code>...- / .. / -.- / - / --- / .-.</code></td><td class="task4-confidence-hidden" aria-hidden="true">94%</td></tr>
+                  <tr><td>IFS-002</td><td>09:33</td><td>CAM-B · b-1</td><td>Courtyard</td><td>Access</td><td>Unauthorized personnel in crane exclusion zone</td><td><code>-- / .- / .-. / -.-. / ..- / ...</code></td><td class="task4-confidence-hidden" aria-hidden="true">87%</td></tr>
+                  <tr><td>IFS-003</td><td>10:07</td><td>CAM-C · c-1</td><td>Entrance corridor</td><td>Safety · PPE</td><td>Person detected without safety vest</td><td><code>.-.. / . / -. / .-</code></td><td class="task4-confidence-hidden" aria-hidden="true">91%</td></tr>
+                  <tr><td>IFS-004</td><td>10:45</td><td>CAM-A · a-2</td><td>Exterior grounds</td><td>Hazard</td><td>Unsecured materials near scaffold</td><td><code>--- / -- / .- / .-.</code></td><td class="task4-confidence-hidden" aria-hidden="true">68%</td></tr>
+                  <tr><td>IFS-005</td><td>11:22</td><td>CAM-B · b-2</td><td>Rooftop</td><td>Fire</td><td>Unattended equipment near combustible materials</td><td><code>-.-- / ..- / -.- / ..</code></td><td class="task4-confidence-hidden" aria-hidden="true">82%</td></tr>
+                  <tr><td>IFS-006</td><td>12:58</td><td>CAM-C · c-1</td><td>Main Entrance</td><td>Safety · PPE</td><td>Two workers detected without helmets</td><td><code>...- / .. / -.- / - / --- / .-.</code></td><td class="task4-confidence-hidden" aria-hidden="true">96%</td></tr>
+                  <tr><td>IFS-007</td><td>13:30</td><td>CAM-B · b-1</td><td>Courtyard</td><td>Access</td><td>Zone overcrowding — 8 workers, limit is 4</td><td><code>... / .- / .-. / .-</code></td><td class="task4-confidence-hidden" aria-hidden="true">89%</td></tr>
+                  <tr><td>IFS-008</td><td>14:15</td><td>CAM-C · c-2</td><td>Construction yard</td><td>Safety · PPE</td><td>Worker near machinery without PPE</td><td><code>-- / .- / .-. / -.-. / ..- / ...</code></td><td class="task4-confidence-hidden" aria-hidden="true">65%</td></tr>
+                  <tr><td>IFS-009</td><td>02:47</td><td>CAM-C · c-1</td><td>Kitchen</td><td>Hazard</td><td>Smoke detected near kitchen area</td><td><code>...- / .. / -.- / - / --- / .-.</code></td><td class="task4-confidence-hidden" aria-hidden="true">34%</td></tr>
+                  <tr><td>IFS-010</td><td>15:03</td><td>CAM-B · b-2</td><td>Rooftop</td><td>Structural</td><td>Crack progression detected near canopy beam</td><td><code>-.-- / ..- / -.- / ..</code></td><td class="task4-confidence-hidden" aria-hidden="true">91%</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1033,7 +1036,7 @@ approved_budget = {
           <div class="task-section">
             <p class="section-kicker">Step 2</p>
             <h3>Build the network</h3>
-            <p class="section-note">As each name is decoded, the graph reveals their issue links, locations, and issue types.</p>
+            <p class="section-note">As each name is decoded, the graph reveals their issue links, locations, issue types, and confidence levels.</p>
             <div class="graph-panel">
               <div class="graph-meta">
                 <strong>Issue relationship graph</strong>
@@ -1046,17 +1049,15 @@ approved_budget = {
           <div class="task-section">
             <p class="section-kicker">Step 3</p>
             <h3>Find the insider</h3>
-            <p class="section-note">Use the graph and the issue log to answer the breach riddle.</p>
-            <ul class="task-outline">
-              <li>Who is assigned to issues in two locations that were sealed after Mission 1?</li>
-              <li>Who appears in an issue logged at 02:47 with only 34% confidence?</li>
-              <li>What does a false alarm at that hour — in a sealed room — actually mean?</li>
-            </ul>
+            <p class="section-note">
+              One person is tied to both <strong>Kitchen</strong> and <strong>Main Entrance</strong>. Use the graph and the
+              issue log to identify the insider.
+            </p>
             <div class="task-step subtask">
-              <label for="answer4">Unlock code</label>
+              <label for="answer4">Insider name</label>
               <div class="row">
-                <input id="answer4" type="text" placeholder="Enter the confidence score" autocomplete="off" />
-                <button class="btn btn-primary" data-check-task4-answer="4">Unlock →</button>
+                <input id="answer4" type="text" placeholder="Enter the insider's name" autocomplete="off" />
+                <button class="btn btn-primary" data-check-task4-answer="4">Identify →</button>
               </div>
             </div>
             <div class="actions">
@@ -1064,7 +1065,94 @@ approved_budget = {
             </div>
             <p id="hint4" class="hint hidden"></p>
             <p id="feedback4" class="feedback"></p>
-            <button id="nextTask4" class="btn btn-primary btn-next hidden" data-next="start">Finish challenge →</button>
+            <button id="nextTask4" class="btn btn-primary btn-next hidden" data-next="final">View completion page →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="final" class="view hidden" aria-live="polite">
+      <div class="card final-card">
+        <div class="final-confetti" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div class="final-hero">
+          <div class="final-visual">
+            <div class="award-stage" aria-hidden="true">
+              <div class="award-glow"></div>
+              <div class="award-orbit orbit-one"></div>
+              <div class="award-orbit orbit-two"></div>
+              <div class="award-trophy">
+                <div class="award-trophy-top"></div>
+                <div class="award-trophy-stem"></div>
+                <div class="award-trophy-base"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="final-copy">
+            <p class="section-kicker">Workshop Complete</p>
+            <h2>Challenge completed. Your team passed the workshop.</h2>
+            <p class="final-lead">
+              Every task is solved, the investigation is closed, and your team has earned its final result.
+            </p>
+            <div class="final-scoreboard">
+              <div class="final-score-ring">
+                <span class="final-score-label">Final score</span>
+                <strong id="finalScoreValue">0</strong>
+                <span class="final-score-max">out of 40 points</span>
+              </div>
+              <div class="final-score-meta">
+                <div class="final-stat">
+                  <span>Award</span>
+                  <strong id="finalAwardLabel">Certificate of Completion</strong>
+                </div>
+                <div class="final-stat">
+                  <span>Workshop status</span>
+                  <strong id="finalStatusText">Passed</strong>
+                </div>
+                <div class="final-stat">
+                  <span>Hints used</span>
+                  <strong id="finalHintsUsed">0</strong>
+                </div>
+              </div>
+            </div>
+            <p id="finalAwardNote" class="final-award-note">
+              Strong finish. Your team worked through the full AI challenge and reached the end.
+            </p>
+            <div class="certificate-card" id="certificateCard">
+              <span class="certificate-kicker">Symetri BIM Summit 2026</span>
+              <h3>Certificate of Completion</h3>
+              <p>
+                This certifies that the workshop team completed the full AI challenge and successfully passed all tasks.
+              </p>
+              <div class="certificate-grid">
+                <div>
+                  <span>Result</span>
+                  <strong id="certificateAward">Certificate of Completion</strong>
+                </div>
+                <div>
+                  <span>Score</span>
+                  <strong id="certificateScore">0 / 40</strong>
+                </div>
+                <div>
+                  <span>Date</span>
+                  <strong id="certificateDate">-</strong>
+                </div>
+              </div>
+            </div>
+            <div class="actions final-actions final-actions-bottom">
+              <button id="backToStartBtn" class="btn btn-ghost">Back to start</button>
+              <button id="printCertificateBtn" class="btn btn-primary">Print diploma</button>
+            </div>
           </div>
         </div>
       </div>
@@ -1159,6 +1247,22 @@ approved_budget = {
       </p>
       <p>
         When metadata gets corrupted, graph reconstruction is often the fastest way to surface the suspicious pattern again.
+      </p>
+    </div>
+    <div class="fact fact-ai" data-for="final">
+      <h3>What happens next?</h3>
+      <p><strong>AI gets more valuable when it is connected to your real project workflows.</strong></p>
+      <p>
+        Symetri can help turn the kinds of tasks from this workshop into practical day-to-day use cases across design,
+        BIM, coordination, documentation, and project delivery.
+      </p>
+      <p>
+        With the right setup, AI can help teams search project material faster, structure messy information, generate
+        first drafts, and support better decisions instead of just acting like a chatbot on the side.
+      </p>
+      <p>
+        The biggest win is usually not one magic feature. It is combining AI with your tools, your data, and the way
+        your team already works so the value shows up in real projects.
       </p>
     </div>
   </aside>
