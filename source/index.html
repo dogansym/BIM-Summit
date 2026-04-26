@@ -10,7 +10,7 @@
 <body>
 <button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation">☰</button>
 <div class="shell" style="grid-template-columns: var(--sidebar-w) 1fr; grid-template-areas: 'sidebar center';">
-  <aside class="sidebar">
+  <aside id="sidebar" class="sidebar">
     <div class="brand">
       <strong>Symetri</strong> BIM Summit
       <span class="brand-sub">Project Workshop</span>
@@ -70,7 +70,9 @@
             You can follow along on a phone for the basics: reading, copying prompts, and understanding the flow. Some steps are easier on desktop, especially file uploads and advanced tool connections.
           </p>
         </div>
-        <button class="btn btn-primary btn-start" data-nav="create-project">Start walkthrough</button>
+        <div class="actions final-actions-bottom">
+          <button class="btn btn-primary btn-start" data-nav="create-project">Start walkthrough</button>
+        </div>
       </div>
     </section>
 

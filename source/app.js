@@ -17,7 +17,7 @@ function showView(targetId) {
     btn.classList.toggle('active', btn.dataset.target === targetId);
   });
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  sidebar.classList.remove('open');
+  if (sidebar) sidebar.classList.remove('open');
 }
 
 /* ── Sidebar nav buttons (data-target) ── */
@@ -31,17 +31,18 @@ document.querySelectorAll('[data-nav]').forEach(btn => {
 });
 
 /* ── Mobile hamburger ── */
-menuToggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+if (menuToggle && sidebar) {
+  menuToggle.addEventListener('click', event => {
+    event.stopPropagation();
+    sidebar.classList.toggle('open');
+  });
 
-document.addEventListener('click', e => {
-  if (
-    sidebar.classList.contains('open') &&
-    !sidebar.contains(e.target) &&
-    e.target !== menuToggle
-  ) {
+  document.addEventListener('click', e => {
+    if (!sidebar.classList.contains('open')) return;
+    if (sidebar.contains(e.target) || menuToggle.contains(e.target)) return;
     sidebar.classList.remove('open');
-  }
-});
+  });
+}
 
 /* ── Copy to clipboard ── */
 document.querySelectorAll('.copy-btn').forEach(btn => {
