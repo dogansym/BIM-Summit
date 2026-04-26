@@ -3,33 +3,318 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Source – Symetri BIM Summit Admin</title>
+  <title>Project Workshop – Symetri BIM Summit</title>
+  <meta name="description" content="A mobile-friendly tutorial for setting up an AI project workspace for a commercial AEC workflow." />
   <link rel="stylesheet" href="../style.css" />
 </head>
 <body>
+<button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation">☰</button>
 <div class="shell" style="grid-template-columns: var(--sidebar-w) 1fr; grid-template-areas: 'sidebar center';">
   <aside class="sidebar">
     <div class="brand">
       <strong>Symetri</strong> BIM Summit
-      <span class="brand-sub">Admin · Source</span>
+      <span class="brand-sub">Project Workshop</span>
     </div>
     <nav class="nav">
+      <button class="nav-item active" data-target="intro">
+        <span class="nav-icon">—</span> Intro
+      </button>
+      <button class="nav-item" data-target="create-project">
+        <span class="nav-icon">1</span> Create Project
+      </button>
+      <button class="nav-item" data-target="add-instructions">
+        <span class="nav-icon">2</span> Add Instructions
+      </button>
+      <button class="nav-item" data-target="add-document">
+        <span class="nav-icon">3</span> Add Document
+      </button>
+      <button class="nav-item" data-target="start-chat">
+        <span class="nav-icon">4</span> Start a Chat
+      </button>
+      <button class="nav-item" data-target="mcp-tools">
+        <span class="nav-icon">5</span> Skills &amp; MCP
+      </button>
+      <button class="nav-item" data-target="vision-models">
+        <span class="nav-icon">★</span> Vision Models
+      </button>
+      <button class="nav-item" data-target="wrap-up">
+        <span class="nav-icon">→</span> Wrap Up
+      </button>
       <a href="../" class="nav-item">
         <span class="nav-icon">←</span> Back to workshop
       </a>
     </nav>
   </aside>
   <main class="center">
-    <section class="view">
+    <section id="intro" class="view">
+      <div class="card welcome-card">
+        <h2>Project Workshop for AEC Teams</h2>
+        <p class="welcome-lead">
+          A short, practical walkthrough for architects, designers, and MEP teams who want to start using AI in a real project workflow.
+        </p>
+        <p>
+          In AEC, every job starts with a project. This page follows the same logic in an AI project workspace: create a project, add instructions, add documents, and then start chats that stay grounded in the project context.
+        </p>
+        <div class="welcome-section">
+          <h3>What this covers</h3>
+          <ul>
+            <li>How to set up a project workspace for a commercial AEC job</li>
+            <li>How to add reusable project instructions so every chat starts from the right context</li>
+            <li>How to upload a BIM Execution Plan and ask action-focused kickoff questions</li>
+            <li>What Skills, MCP servers, and vision models unlock for later workflows</li>
+          </ul>
+        </div>
+        <div class="welcome-section">
+          <h3>Device note</h3>
+          <p>
+            You can follow along on a phone for the basics: reading, copying prompts, and understanding the flow. Some steps are easier on desktop, especially file uploads and advanced tool connections.
+          </p>
+        </div>
+        <button class="btn btn-primary btn-start" data-nav="create-project">Start walkthrough</button>
+      </div>
+    </section>
+
+    <section id="create-project" class="view hidden">
       <div class="card">
         <div class="task-head">
           <div class="task-head-copy">
-            <h2>Source</h2>
+            <h2>Step 1 · Create the Project</h2>
+            <p class="scenario">
+              Start with the project container first. In AEC, that mirrors the way teams organize work from kickoff onward.
+            </p>
+          </div>
+        </div>
+        <div class="spirit-list">
+          <div class="spirit-item">
+            <dt>Create a new project</dt>
+            <dd>Use a clear name such as "Commercial Office Fitout – Project Startup". A description is optional and can be added later.</dd>
+          </div>
+        </div>
+        <div class="fact fact-ai visible" style="margin-top:1rem; display:block;">
+          <h3>Note: Sharing projects</h3>
+          <p>
+            Once the setup is working well, projects can be shared with others on the team. Team members can be invited to use, edit, and contribute to the project. Make sure the instructions and reference files stay accurate as the project evolves.
+          </p>
+        </div>
+        <div class="actions" style="margin-top:1rem;">
+          <button class="btn btn-primary" data-nav="add-instructions">Next: Add Instructions</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="add-instructions" class="view hidden">
+      <div class="card">
+        <div class="task-head">
+          <div class="task-head-copy">
+            <h2>Step 2 · Add Project Instructions</h2>
+            <p class="scenario">
+              This becomes the persistent context for the project, so every new chat starts with the same expectations.
+            </p>
+          </div>
+          <div class="task-head-side">
+            <button class="btn btn-sm copy-btn" data-copy="instructionsBlock">Copy</button>
+          </div>
+        </div>
+        <p>
+          This version is tuned for a commercial AEC project with an architect-led audience, while still supporting MEP coordination and document review.
+        </p>
+        <div id="instructionsBlock" class="text-viewer" tabindex="0">
+          <p><strong>Commercial AEC Project Instructions</strong></p>
+          <p>You are supporting the startup of a commercial AEC project. Assume the user is part of an architect-led team working with consultants across architecture, interiors, structural, and MEP disciplines.</p>
+          <p>Prioritize practical, project-ready outputs over generic explanations. Keep responses concise, structured, and action oriented.</p>
+          <p>When reviewing documents, drawings, or notes:</p>
+          <p>- Identify key project requirements, decisions, risks, open questions, and coordination items.</p>
+          <p>- Highlight anything that should be discussed in kickoff, design coordination, BIM execution, or scope clarification meetings.</p>
+          <p>- Separate confirmed information from assumptions.</p>
+          <p>- Call out missing information that the team should request early.</p>
+          <p>When helping generate project materials:</p>
+          <p>- Use a professional tone suitable for project teams, owners, architects, and consultants.</p>
+          <p>- Prefer short agendas, checklists, decision logs, action item lists, and meeting-ready summaries.</p>
+          <p>- Assume the project may already have an architectural floor plan that MEP and other disciplines will build from.</p>
+          <p>- Consider BIM coordination, drawing standards, document control, consultant alignment, permitting, schedule, and scope management.</p>
+          <p>Do not invent project facts. If information is missing, say what is unknown and recommend the next question or document to review.</p>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" data-nav="add-document">Next: Add Document</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="add-document" class="view hidden">
+      <div class="card">
+        <div class="task-head">
+          <div class="task-head-copy">
+            <h2>Step 3 · Add a Document</h2>
+            <p class="scenario">
+              Add a real project document so the chats are based on actual source material rather than generic prompting.
+            </p>
+          </div>
+        </div>
+        <div class="welcome-section" style="margin-top:0; padding-top:0; border-top:none;">
+          <h3>Workshop document</h3>
+          <p>
+            Use the BIM Execution Plan as the sample project document. This shows attendees how quickly an AI app becomes more useful when it has real project content to work from.
+          </p>
+          <div class="doc-actions">
+            <a href="assets/bim-execution-plan.docx" target="_blank" class="btn btn-sm">Download BIM Execution Plan (.docx)</a>
+          </div>
+        </div>
+        <div class="spirit-list">
+          <div class="spirit-item">
+            <dt>Why this matters</dt>
+            <dd>Once the document is part of the project, chats can reference actual standards, roles, deliverables, and BIM requirements.</dd>
+          </div>
+          <div class="spirit-item">
+            <dt>Keep it maintained</dt>
+            <dd>Projects like this work best when someone owns the instruction set, updates the reference files, and removes outdated material over time.</dd>
+          </div>
+        </div>
+        <div class="actions" style="margin-top:1rem;">
+          <button class="btn btn-primary" data-nav="start-chat">Next: Start a Chat</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="start-chat" class="view hidden">
+      <div class="card">
+        <div class="task-head">
+          <div class="task-head-copy">
+            <h2>Step 4 · Start a Chat</h2>
+            <p class="scenario">
+              Use a short prompt that turns the uploaded project context into something immediately useful for the team.
+            </p>
+          </div>
+          <div class="task-head-side">
+            <button class="btn btn-sm copy-btn" data-copy="kickoffPromptBlock">Copy</button>
+          </div>
+        </div>
+        <div id="kickoffPromptBlock" class="text-viewer" tabindex="0">
+          <p><strong>Kickoff Meeting Prompt</strong></p>
+          <p>Using the project instructions and the BIM Execution Plan in this project, create a short and action-focused kickoff meeting agenda for a commercial AEC project startup.</p>
+          <p>Keep it concise and organized for a live meeting.</p>
+          <p>Include:</p>
+          <p>- project goals and scope alignment</p>
+          <p>- BIM roles, responsibilities, and coordination expectations</p>
+          <p>- immediate risks or missing information that should be clarified early</p>
+          <p>- the top action items to assign after kickoff</p>
+          <p>Format the output as a clean agenda with short bullets and an action item list.</p>
+        </div>
+        <div class="welcome-section">
+          <h3>Why start here</h3>
+          <p>
+            A well-structured project can generate useful outputs fast. One document plus one instruction set is enough to create a focused kickoff agenda or early risk summary.
+          </p>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" data-nav="mcp-tools">Next: Skills &amp; MCP</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="mcp-tools" class="view hidden">
+      <div class="card">
+        <div class="task-head">
+          <div class="task-head-copy">
+            <h2>Step 5 · Skills &amp; MCP Servers</h2>
+            <p class="scenario">
+              Use this section as a reference for what can be added after the base project setup is working.
+            </p>
+          </div>
+        </div>
+        <div class="spirit-list">
+          <div class="spirit-item">
+            <dt>Skills</dt>
+            <dd>Skills help tailor how the AI responds inside a project. For AEC, that might include drafting support, scheduling, BIM review, meeting summaries, or QA workflows.</dd>
+          </div>
+          <div class="spirit-item">
+            <dt>MCP servers</dt>
+            <dd>MCP servers connect tools and systems into the AI workflow. That can include Revit, internal systems, document repositories, or other project data sources.</dd>
+          </div>
+          <div class="spirit-item">
+            <dt>Operational note</dt>
+            <dd>These setups usually need ownership. If a project, prompt library, or tool connection becomes valuable, someone should maintain it so the workflow stays accurate and useful.</dd>
+          </div>
+        </div>
+        <div class="welcome-section">
+          <h3>Creating a reusable skill</h3>
+          <p>
+            Skills can be created in Claude to encapsulate project instructions or workflows. Here is how to build one from your current setup:
+          </p>
+          <ol style="padding-left:1.5rem; margin:0.6rem 0;">
+            <li>Go to the Customize menu in Claude and select Skills</li>
+            <li>Choose "Add skill from browser" or "Create skill"</li>
+            <li>Use the prompt below and let the skill creator assist you</li>
+          </ol>
+        </div>
+        <div class="welcome-section">
+          <p style="font-size:0.9rem; color:var(--muted);">Copy the prompt and add any context from your current project setup:</p>
+        </div>
+        <div class="doc-actions">
+          <button class="btn btn-sm copy-btn" data-copy="skillCreatorPromptBlock">Copy prompt</button>
+          <a href="assets/aec-project-startup.skill" target="_blank" class="btn btn-sm">Download skill file</a>
+        </div>
+        <div id="skillCreatorPromptBlock" class="text-viewer" tabindex="0" style="margin-top:0.8rem;">
+          <p>can you create a skill from this project to be used for other project startup tasks?</p>
+          <p>/skill-creator</p>
+        </div>
+        <div class="actions" style="margin-top:1rem;">
+          <button class="btn btn-primary" data-nav="vision-models">Next: Vision Models</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="vision-models" class="view hidden">
+      <div class="card">
+        <div class="task-head">
+          <div class="task-head-copy">
+            <h2>Vision Models · Optional</h2>
+            <p class="scenario">
+              Use this section later if you want to test plan reading, visual reasoning, and structured design output.
+            </p>
+          </div>
+          <div class="task-head-side">
+            <button class="btn btn-sm copy-btn" data-copy="visionPromptBlock">Copy</button>
+          </div>
+        </div>
+        <div class="img-frame task-intro-image">
+          <img src="assets/floorplan.png" alt="Commercial mixed-use floor plan for vision model demonstration" loading="lazy" />
+        </div>
+        <div id="visionPromptBlock" class="text-viewer" tabindex="0">
+          <p><strong>Vision Model Prompt</strong></p>
+          <p>Can you act as an electrical designer and take this architecture background and lay out the electrical outlets where they need to be on this view based on the walls and room types. Follow NEC standards for electrical outlet and device layouts as well.</p>
+          <p>Add symbols on the walls for the devices and note their coordinates in relation to the drawing. The output will be used to import into Revit with a plugin to do the layouts of the devices. Ensure accuracy in the layouts as well. Do not worry about adding the coordinates to the view, just add the device where it needs to be. Add any electrical receptacles per code on this view for now. It needs to be an overlay on the image, and color the electrical outline in a color that we can see, not black, but in green so we can see easily. Here is the view again in plan.</p>
+          <p>Here is the floor plan view that we need device layout on as well. Instead of adding the coordinates on the sheet, just output the JSON related to each device, then we can use that to import into Revit. The only thing we want to see on the plan is the device and ID that will show up in the JSON too, and the details in the JSON can be there for coordinates and the height of the device as well. Follow ADA for device layout and height requirements.</p>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" data-nav="wrap-up">Next: Wrap Up</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="wrap-up" class="view hidden">
+      <div class="card final-card">
+        <div class="final-copy" style="text-align:left; width:100%; max-width:none;">
+          <h2>Next Steps</h2>
+          <p class="final-lead" style="margin-inline:0; max-width:52ch;">
+            Once the base setup works, it becomes a reusable project template that can support kickoff planning, document review, coordination prep, and follow-on automation.
+          </p>
+          <div class="welcome-section">
+            <h3>Build on the base setup</h3>
+            <ul>
+              <li>Create one real project in your preferred AI app</li>
+              <li>Add one reusable instruction set for your team</li>
+              <li>Upload one real project document and ask for a kickoff agenda or risk summary</li>
+              <li>Add shared prompts, reference files, or tool connections only after the core workflow is working well</li>
+            </ul>
+          </div>
+          <div class="actions final-actions-bottom">
+            <button class="btn btn-primary" data-nav="intro">Back to intro</button>
           </div>
         </div>
       </div>
     </section>
   </main>
 </div>
+<script src="app.js"></script>
 </body>
 </html>
